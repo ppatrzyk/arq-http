@@ -10,7 +10,7 @@ from random import random
 
 from .config import ARQ_CONN_CONFIG
 
-async def get_random_numbers(n: int):
+async def get_random_numbers(ctx: dict, n: int):
     assert n >= 0, "n must be positive"
     numbers = tuple(random() for _ in range(n))
     return numbers

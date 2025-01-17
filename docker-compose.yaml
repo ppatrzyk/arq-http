@@ -2,5 +2,5 @@ services:
   valkey:
     image: valkey/valkey:8.0.2
     ports:
-      - 6379:6379
+      - 6380:6379
     restart: unless-stopped
