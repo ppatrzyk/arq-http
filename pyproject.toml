@@ -5,7 +5,7 @@ description = "arq dashboard and http api"
 authors = [ {name = "Piotr Patrzyk"}, ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dynamic = ["dependencies", ]
 keywords = [TODO]
 classifiers = [
