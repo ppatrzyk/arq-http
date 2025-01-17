@@ -1,0 +1,33 @@
+[project]
+name = "arq-monitor"
+version = "0.1"
+description = "arq dashboard and http api"
+authors = [ {name = "Piotr Patrzyk"}, ]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dynamic = ["dependencies", ]
+keywords = [TODO]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Internet",
+]
+
+[project.urls]
+Source = "https://github.com/ppatrzyk/arq-monitor"
+
+[project.scripts]
+arq-monitor = "TODO"
+
+[build-system]
+requires = ["setuptools", ]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["arq_monitor"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
