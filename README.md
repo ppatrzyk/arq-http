@@ -14,4 +14,5 @@ curl -X POST -d '{"_queue_name": "arq:myqueue", "function": "get_random_numbers"
 TODO:
     result containing error "Object of type TypeError is not JSON serializable"
     args kwargs reformatting, leave int float bool rest to str, + leave iterables: utils reformat functions
+    verify if data included in pip package
     https://setuptools.pypa.io/en/latest/userguide/datafiles.html

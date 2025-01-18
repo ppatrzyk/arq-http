@@ -10,7 +10,7 @@ import logging
 
 from arq import create_pool
 
-from .config import ARQ_CONN_CONFIG
+from .config import ARQ_CONN_CONFIG, TEMPLATES
 from .utils import get_job_results, create_new_job, get_queue
 
 async def http_exception(request: Request, exc: HTTPException):
@@ -59,6 +59,18 @@ async def create_job(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
     return response
 
+async def get_dashboard(request: Request):
+    """
+    Get status of existing job
+    """
+    data = {}
+    response = TEMPLATES.TemplateResponse(
+        request=request,
+        name="dashboard.html.jinja",
+        context=data
+    )
+    return response
+
 exception_handlers = {
     HTTPException: http_exception
 }
@@ -69,6 +81,7 @@ async def lifespan(_app):
     yield {"arq_conn": arq_conn}
 
 routes=[
+    Route(path='/', endpoint=get_dashboard, methods=["GET", ]),
     Route(path='/jobs', endpoint=get_jobs, methods=["GET", ]),
     Route(path='/jobs', endpoint=create_job, methods=["POST", ]),
 ]
