@@ -7,7 +7,7 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.12"
 dynamic = ["dependencies", ]
-keywords = [TODO]
+keywords = ["arq", "dashboard", "monitoring"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "License :: OSI Approved :: MIT License",
@@ -19,12 +19,12 @@ classifiers = [
 [project.urls]
 Source = "https://github.com/ppatrzyk/arq-monitor"
 
-[project.scripts]
-arq-monitor = "TODO"
-
 [build-system]
 requires = ["setuptools", ]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+script-files = ["scripts/arq-monitor"]
 
 [tool.setuptools.packages.find]
 include = ["arq_monitor"]
