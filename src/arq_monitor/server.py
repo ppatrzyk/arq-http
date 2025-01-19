@@ -2,7 +2,7 @@ from starlette.applications import Starlette
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.routing import Route
+from starlette.routing import Mount, Route
 
 import contextlib
 from datetime import datetime, timedelta, UTC
@@ -10,7 +10,7 @@ import logging
 
 from arq import create_pool
 
-from .config import ARQ_CONN_CONFIG, TEMPLATES
+from .config import ARQ_CONN_CONFIG, STATIC, TEMPLATES
 from .utils import get_job_results, create_new_job, get_queue
 
 async def http_exception(request: Request, exc: HTTPException):
@@ -81,9 +81,10 @@ async def lifespan(_app):
     yield {"arq_conn": arq_conn}
 
 routes=[
-    Route(path='/', endpoint=get_dashboard, methods=["GET", ]),
-    Route(path='/jobs', endpoint=get_jobs, methods=["GET", ]),
-    Route(path='/jobs', endpoint=create_job, methods=["POST", ]),
+    Route(path='/', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
+    Route(path='/jobs', endpoint=get_jobs, methods=["GET", ], name="get_jobs"),
+    Route(path='/jobs', endpoint=create_job, methods=["POST", ], name="create_job"),
+    Mount("/static", app=STATIC, name="static"),
 ]
 
 app = Starlette(

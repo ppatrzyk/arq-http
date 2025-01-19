@@ -1,0 +1,2 @@
+include src/arq_monitor/frontend/assets/*
+include src/arq_monitor/frontend/templates/*
