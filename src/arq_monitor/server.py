@@ -3,7 +3,9 @@ from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
+from sse_starlette.sse import EventSourceResponse
 
+import asyncio
 import contextlib
 from datetime import datetime, timedelta, UTC
 import logging
@@ -71,6 +73,17 @@ async def get_dashboard(request: Request):
     )
     return response
 
+async def sse_gen_test(start: int):
+    i = start
+    while True:
+        await asyncio.sleep(0.9)
+        yield dict(event="dashboard-data", data=i)
+        i += 1
+
+async def get_dashboard_data(request):
+    generator = sse_gen_test(1)
+    return EventSourceResponse(generator)
+
 exception_handlers = {
     HTTPException: http_exception
 }
@@ -82,6 +95,7 @@ async def lifespan(_app):
 
 routes=[
     Route(path='/', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
+    Route(path='/get-dashboard-data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
     Route(path='/jobs', endpoint=get_jobs, methods=["GET", ], name="get_jobs"),
     Route(path='/jobs', endpoint=create_job, methods=["POST", ], name="create_job"),
     Mount("/static", app=STATIC, name="static"),
