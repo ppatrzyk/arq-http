@@ -5,14 +5,16 @@ from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 from sse_starlette.sse import EventSourceResponse
 
+import anyio
+from anyio.streams.memory import MemoryObjectSendStream
 import asyncio
 import contextlib
 from datetime import datetime, timedelta, UTC
-import logging
+from functools import partial
 
 from arq import create_pool
 
-from .config import ARQ_CONN_CONFIG, STATIC, TEMPLATES
+from .config import ARQ_CONN_CONFIG, logger, STATIC, TEMPLATES
 from .utils import get_job_results, create_new_job, get_queue
 
 async def http_exception(request: Request, exc: HTTPException):
@@ -73,16 +75,35 @@ async def get_dashboard(request: Request):
     )
     return response
 
-async def sse_gen_test(start: int):
-    i = start
-    while True:
-        await asyncio.sleep(0.9)
-        yield dict(event="dashboard-data", data=i)
-        i += 1
+async def sse_gen_test(inner_send_chan: MemoryObjectSendStream):
+    """
+    adapted from https://github.com/sysid/sse-starlette/blob/main/examples/no_async_generators.py#L22
+    """
+    async with inner_send_chan:
+        try: 
+            i = 0
+            while True:
+                await anyio.sleep(1.0)
+                data = dict(event="dashboard-data", data=i)
+                await inner_send_chan.send(data)
+                i += 1
+        except anyio.get_cancelled_exc_class() as e:
+            with anyio.move_on_after(1, shield=True):
+                close_msg = dict(closing=True)
+                await inner_send_chan.send(close_msg)
+                raise e
 
-async def get_dashboard_data(request):
-    generator = sse_gen_test(1)
-    return EventSourceResponse(generator)
+async def get_dashboard_data(request: Request):
+    """
+    Get dashboard data
+    """
+    send_chan, recv_chan = anyio.create_memory_object_stream(max_buffer_size=10)
+    response = EventSourceResponse(
+        data_sender_callable=partial(sse_gen_test, send_chan),
+        content=recv_chan,
+        send_timeout=5
+    )
+    return response
 
 exception_handlers = {
     HTTPException: http_exception

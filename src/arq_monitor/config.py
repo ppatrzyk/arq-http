@@ -4,11 +4,14 @@ Config
 
 from arq.connections import RedisSettings
 from jinja2 import Environment, FileSystemLoader
+import logging
 import os
 from starlette.config import Config
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
+
+logger = logging.getLogger('uvicorn.error')
 
 config = Config(".env")
 REDIS_ADDRESS = config("REDIS_ADDRESS", default="redis://localhost:6379")
