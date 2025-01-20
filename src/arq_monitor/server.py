@@ -33,8 +33,8 @@ async def get_jobs(request: Request):
         data = await get_job_results(arq_conn=request.state.arq_conn)
         get_queue_tasks = tuple(get_queue(arq_conn=request.state.arq_conn, queue_name=queue_name) for queue_name in data.keys())
         get_queue_results = await asyncio.gather(*get_queue_tasks)
-        for i, queue_name in enumerate(data.keys(), start=0):
-            data[queue_name]["queue"] = get_queue_results[i]
+        for queue_name, queue_data in zip(data.keys(), get_queue_results):
+            data[queue_name]["queue"] = queue_data
         response = JSONResponse(
             content={"jobs": data, "updated_at": updated_at, "status": "success"},
             status_code=200
