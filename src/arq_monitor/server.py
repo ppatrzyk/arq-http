@@ -80,17 +80,19 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
     async with inner_send_chan:
         try: 
             while True:
+                # TODO push only if data has changed?
                 await anyio.sleep(1.0)
-                dashboard_data = await get_jobs_data(arq_conn)
-                # TODO add computed stats here
+                jobs_data = await get_jobs_data(arq_conn)
+                jobs_data = await compute_stats(jobs_data)
+                # TODO put data and return template
                 data = {
                     "event": "dashboard-data",
-                    "data": dashboard_data,
+                    "data": jobs_data,
                 }
                 await inner_send_chan.send(data)
         except anyio.get_cancelled_exc_class() as e:
             with anyio.move_on_after(1, shield=True):
-                close_msg = dict(closing=True)
+                close_msg = {"closing": True, }
                 await inner_send_chan.send(close_msg)
                 raise e
 
@@ -118,7 +120,7 @@ async def lifespan(_app):
 
 routes=[
     Route(path='/', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
-    Route(path='/get-dashboard-data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
+    Route(path='/dashboard-data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
     Route(path='/jobs', endpoint=get_jobs, methods=["GET", ], name="get_jobs"),
     Route(path='/jobs', endpoint=create_job, methods=["POST", ], name="create_job"),
     Mount("/static", app=STATIC, name="static"),

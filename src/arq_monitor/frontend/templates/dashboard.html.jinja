@@ -2,7 +2,7 @@
 {% block content %}
     <h1>Dashboard</h1>
     <p>test</p>
-    <div hx-ext="sse" sse-connect="/get-dashboard-data" sse-swap="dashboard-data">
+    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('get_dashboard_data') }}" sse-swap="dashboard-data">
         htmx see test
     </div>
 {% endblock %}

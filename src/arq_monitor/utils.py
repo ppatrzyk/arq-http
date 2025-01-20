@@ -82,16 +82,16 @@ async def compute_stats(data: dict):
     """
     Compute additional stats on reformatted data
     """
-    stats = dict()
-    for queue in data.keys():
-        results_data = data.get(queue).get("results")
-        functions = dict()
+    for queue_name, queue_data in data.items():
+        results_data = queue_data.get("results")
+        stats = dict()
         for function, func_jobs in itertools.groupby(results_data, lambda job: job.get("function")):
             func_jobs = tuple(func_jobs)
             keys = ("start_time", "time_inqueue", "time_exec", )
-            functions[function] = {key: tuple(job.get(key) for job in func_jobs) for key in keys}
+            stats[function] = {key: tuple(job.get(key) for job in func_jobs) for key in keys}
             # TODO percentiles
-    return stats
+        queue_data["stats"] = stats
+    return data
 
 async def create_new_job(arq_conn: ArqRedis, kwargs: dict):
     """
