@@ -13,9 +13,10 @@ from datetime import datetime, timedelta, UTC
 from functools import partial
 
 from arq import create_pool
+from arq.connections import ArqRedis
 
 from .config import ARQ_CONN_CONFIG, logger, STATIC, TEMPLATES
-from .utils import get_job_results, create_new_job, get_queue
+from .utils import compute_stats, create_new_job, get_jobs_data
 
 async def http_exception(request: Request, exc: HTTPException):
     content = {
@@ -30,11 +31,7 @@ async def get_jobs(request: Request):
     """
     try:
         updated_at = datetime.now(tz=UTC).isoformat()
-        data = await get_job_results(arq_conn=request.state.arq_conn)
-        get_queue_tasks = tuple(get_queue(arq_conn=request.state.arq_conn, queue_name=queue_name) for queue_name in data.keys())
-        get_queue_results = await asyncio.gather(*get_queue_tasks)
-        for queue_name, queue_data in zip(data.keys(), get_queue_results):
-            data[queue_name]["queue"] = queue_data
+        data = await get_jobs_data(arq_conn=request.state.arq_conn)
         response = JSONResponse(
             content={"jobs": data, "updated_at": updated_at, "status": "success"},
             status_code=200
@@ -66,7 +63,7 @@ async def create_job(request: Request):
 
 async def get_dashboard(request: Request):
     """
-    Get status of existing job
+    Get dashboard page
     """
     data = {}
     response = TEMPLATES.TemplateResponse(
@@ -76,18 +73,21 @@ async def get_dashboard(request: Request):
     )
     return response
 
-async def sse_gen_test(inner_send_chan: MemoryObjectSendStream):
+async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: ArqRedis):
     """
     adapted from https://github.com/sysid/sse-starlette/blob/main/examples/no_async_generators.py#L22
     """
     async with inner_send_chan:
         try: 
-            i = 0
             while True:
                 await anyio.sleep(1.0)
-                data = dict(event="dashboard-data", data=i)
+                dashboard_data = await get_jobs_data(arq_conn)
+                # TODO add computed stats here
+                data = {
+                    "event": "dashboard-data",
+                    "data": dashboard_data,
+                }
                 await inner_send_chan.send(data)
-                i += 1
         except anyio.get_cancelled_exc_class() as e:
             with anyio.move_on_after(1, shield=True):
                 close_msg = dict(closing=True)
@@ -99,8 +99,9 @@ async def get_dashboard_data(request: Request):
     Get dashboard data
     """
     send_chan, recv_chan = anyio.create_memory_object_stream(max_buffer_size=10)
+    arq_conn = request.state.arq_conn
     response = EventSourceResponse(
-        data_sender_callable=partial(sse_gen_test, send_chan),
+        data_sender_callable=partial(dashboard_data_gen, send_chan, arq_conn),
         content=recv_chan,
         send_timeout=5
     )
