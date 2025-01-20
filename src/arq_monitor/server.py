@@ -31,9 +31,10 @@ async def get_jobs(request: Request):
     try:
         updated_at = datetime.now(tz=UTC).isoformat()
         data = await get_job_results(arq_conn=request.state.arq_conn)
-        # TODO asyncio gather
-        for queue_name in data.keys():
-            data[queue_name]["queue"] = await get_queue(arq_conn=request.state.arq_conn, queue_name=queue_name)
+        get_queue_tasks = tuple(get_queue(arq_conn=request.state.arq_conn, queue_name=queue_name) for queue_name in data.keys())
+        get_queue_results = await asyncio.gather(*get_queue_tasks)
+        for i, queue_name in enumerate(data.keys(), start=0):
+            data[queue_name]["queue"] = get_queue_results[i]
         response = JSONResponse(
             content={"jobs": data, "updated_at": updated_at, "status": "success"},
             status_code=200
