@@ -1,8 +1,21 @@
 import asyncio
-from arq.connections import ArqRedis, RedisSettings
+from arq.connections import ArqRedis
 from arq.jobs import JobDef, JobResult
 
 import itertools
+
+def _value_repr(val):
+    """
+    Data respresentation for json responses
+    """
+    if isinstance(val, (tuple, list, set, )):
+        return tuple(_value_repr(entry) for entry in val)
+    elif isinstance(val, dict):
+        return {k: _value_repr(v) for k, v in val.items()}
+    elif isinstance(val, (bool, int, float, )):
+        return val
+    else:
+        return str(val)
 
 def _job_def_reformat(job: JobDef):
     """
@@ -13,8 +26,8 @@ def _job_def_reformat(job: JobDef):
         "job_try": job.job_try,
         "job_id": job.job_id,
         "function": job.function,
-        "args": tuple(str(arg) for arg in job.args),
-        "kwargs": {str(key): str(val) for key, val in job.kwargs.items()},
+        "args": _value_repr(job.args),
+        "kwargs": _value_repr(job.kwargs),
     }
     return data
 
