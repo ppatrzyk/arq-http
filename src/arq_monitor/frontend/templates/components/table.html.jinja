@@ -1,0 +1,10 @@
+<table>
+    <thead><tr>
+        {% for col in data[0].keys() %}<th>{{ col|e }}</th>{% endfor %}
+    </tr></thead>
+    <tbody>
+        {% for row in data %}
+            <tr>{% for entry in row.values() %}<td>{{ entry|e }}</td>{% endfor %}</tr>
+        {% endfor %}
+    </tbody>
+</table>

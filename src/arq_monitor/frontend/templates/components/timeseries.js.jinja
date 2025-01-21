@@ -1,0 +1,26 @@
+plotDiv = document.getElementById("{{ plot_id }}");
+
+// line
+const data = [
+  [1546300800, 1546387200],
+  [90, 15],
+];
+
+let opts = {
+  title: "My Chart {{ plot_id }}",
+  id: "{{ plot_id }}",
+  class: "my-chart",
+  width: 800,
+  height: 600,
+  series: [
+    {},
+    {
+      show: true,
+      spanGaps: false,
+      label: "y value label",
+      value: (self, rawValue) => rawValue.toFixed(2),
+      stroke: "blue",
+      width: 1,
+    },
+  ],
+};

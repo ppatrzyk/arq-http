@@ -24,10 +24,10 @@ template_dir = os.path.join(app_dir, "frontend/templates")
 def app_context(request: Request) -> dict:
     return {"request": request, }
 
-jinja_env = Environment(
+JINJA_ENV = Environment(
     autoescape=True,
     loader=FileSystemLoader(searchpath=template_dir)
 )
-TEMPLATES = Jinja2Templates(env=jinja_env, context_processors=[app_context, ],)
+TEMPLATES = Jinja2Templates(env=JINJA_ENV, context_processors=[app_context, ],)
 
 STATIC = StaticFiles(directory=assets_dir)

@@ -15,7 +15,7 @@ from functools import partial
 from arq import create_pool
 from arq.connections import ArqRedis
 
-from .config import ARQ_CONN_CONFIG, logger, STATIC, TEMPLATES
+from .config import ARQ_CONN_CONFIG, JINJA_ENV, logger, STATIC, TEMPLATES
 from .stats import compute_stats
 from .utils import create_new_job, get_jobs_data
 
@@ -85,15 +85,13 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
                 stats_data = compute_stats(jobs_data)
-                # TODO return generated jinja templates here
-                # env = JinjaEnvironment()
-                # compose_template = env.get_template("name.html.jinja")
-                # config_template.render(**kwargs)
+                stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
+                table_template = JINJA_ENV.get_template("components/table.html.jinja")
                 data = {
-                    "queues-data": jobs_data.get("queues"),
-                    "queues-stats": stats_data.get("queues_stats"),
-                    "jobs-data": jobs_data.get("results"),
-                    "jobs-stats": stats_data.get("results_stats"),
+                    "queues-data": table_template.render(data=jobs_data.get("queues").get('arq:myqueue')),
+                    "queues-stats": stats_template.render(data=stats_data.get("queues_stats")),
+                    "jobs-data": table_template.render(data=jobs_data.get("results").get('arq:myqueue')),
+                    "jobs-stats": stats_template.render(data=stats_data.get("results_stats")),
                 }
                 for event_name, event_data in data.items():
                     event = {
