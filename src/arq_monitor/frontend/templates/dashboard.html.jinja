@@ -3,9 +3,9 @@
     <h1>Dashboard</h1>
     <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('get_dashboard_data') }}" >
         <h2>Queue items</h2>
-        <div sse-swap="queue-items"></div>
+        <div sse-swap="queues-data"></div>
         <h2>Queue stats</h2>
-        <div sse-swap="queue-stats"></div>
+        <div sse-swap="queues-stats"></div>
         <h2>Jobs items</h2>
         <div sse-swap="jobs-data"></div>
         <h2>Jobs stats</h2>

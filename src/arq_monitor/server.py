@@ -83,17 +83,20 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 # TODO push only if data has changed?
                 await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
-                jobs_data = await compute_stats(jobs_data)
-                # TODO put data and return template
-                # "queue-items"
-                # "queue-stats"
-                # "jobs-data"
-                # "jobs-stats"
+                stats_data = await compute_stats(jobs_data)
+                # TODO return generated jinja templates here
                 data = {
-                    "event": "dashboard-data",
-                    "data": jobs_data,
+                    "queues-data": jobs_data.get("queues"),
+                    "queues-stats": stats_data.get("queues_stats"),
+                    "jobs-data": jobs_data.get("results"),
+                    "jobs-stats": stats_data.get("results_stats"),
                 }
-                await inner_send_chan.send(data)
+                for event_name, event_data in data.items():
+                    event = {
+                        "event": event_name,
+                        "data": event_data,
+                    }
+                    await inner_send_chan.send(event)
         except anyio.get_cancelled_exc_class() as e:
             with anyio.move_on_after(1, shield=True):
                 close_msg = {"closing": True, }
