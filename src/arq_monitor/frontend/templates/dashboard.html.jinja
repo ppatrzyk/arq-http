@@ -1,8 +1,14 @@
 {% extends "base.html.jinja" %}
 {% block content %}
     <h1>Dashboard</h1>
-    <p>test</p>
-    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('get_dashboard_data') }}" sse-swap="dashboard-data">
-        htmx see test
+    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('get_dashboard_data') }}" >
+        <h2>Queue items</h2>
+        <div sse-swap="queue-items"></div>
+        <h2>Queue stats</h2>
+        <div sse-swap="queue-stats"></div>
+        <h2>Jobs items</h2>
+        <div sse-swap="jobs-data"></div>
+        <h2>Jobs stats</h2>
+        <div sse-swap="jobs-stats"></div>
     </div>
 {% endblock %}

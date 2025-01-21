@@ -85,6 +85,10 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 jobs_data = await get_jobs_data(arq_conn)
                 jobs_data = await compute_stats(jobs_data)
                 # TODO put data and return template
+                # "queue-items"
+                # "queue-stats"
+                # "jobs-data"
+                # "jobs-stats"
                 data = {
                     "event": "dashboard-data",
                     "data": jobs_data,
