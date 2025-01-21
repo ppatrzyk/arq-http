@@ -6,40 +6,43 @@ import itertools
 import numpy as np
 from operator import itemgetter
 
+def _get_stats(jobs: tuple, x_name: str, y_name: str):
+    """
+    get time series, cdf, and histogram data
+    """
+    stats = None
+    if len(jobs) >= 2:
+        stats = dict()
+        x = (job.get(x_name) for job in jobs)
+        y = (job.get(y_name) for job in jobs)
+        x, y = [list(x) for x in zip(*sorted(zip(x, y), key=itemgetter(0)))]
+        hist_vals, hist_edges = np.histogram(y, bins=10)
+        hist_vals = hist_vals.tolist()
+        hist_vals.append(hist_vals[-1])
+        hist_edges = hist_edges.tolist()
+        stats = {
+            "ts_start_time": x,
+            "ts_time_exec": y,
+            "cdf_x": tuple(range(1, 101)),
+            "cdf_y": np.percentile(y, range(1, 101)).tolist(),
+            "hist_edges": hist_edges,
+            "hist_vals": hist_vals,
+        }
+    return stats
+
 def compute_stats(data: dict):
     """
     Compute additional stats on reformatted data
     """
     results = data.get("results", {})
-    queues = data.get("queues", {})
     results_stats = dict()
+    queues_stats = dict()
     for queue_name, results_data in results.items():
+        queues_stats[queue_name] = _get_stats(results_data, "start_time", "time_inqueue")
+        stats = dict()
         for function, func_jobs in itertools.groupby(results_data, lambda job: job.get("function")):
-            stats = dict()
             func_jobs = tuple(func_jobs)
-            start_time = (job.get("start_time") for job in func_jobs)
-            time_exec = (job.get("time_exec") for job in func_jobs)
-            start_time, time_exec = [list(x) for x in zip(*sorted(zip(start_time, time_exec), key=itemgetter(0)))]
-            stats[function] = {
-                "ts_start_time": start_time,
-                "ts_time_exec": time_exec,
-            }
-            # TODO percentiles
+            stats[function] = _get_stats(func_jobs, "start_time", "time_exec")
         results_stats[queue_name] = stats
-    queue_stats = dict()
-    # TODO queue stats time_inqueue
-    data = {"results_stats": results_stats, "queues_stats": queue_stats, }
+    data = {"results_stats": results_stats, "queues_stats": queues_stats, }
     return data
-
-# TODO add to stats
-# # cdf
-# x = range(1, 101)
-# y = np.percentile(numbers, x)
-
-# # histogram
-# hist_vals, hist_edges = np.histogram(numbers, bins=10)
-# hist_vals = hist_vals.tolist()
-# hist_vals.append(hist_vals[-1])
-# hist_edges = hist_edges.tolist()
-# print(hist_edges)
-# print(hist_vals)
