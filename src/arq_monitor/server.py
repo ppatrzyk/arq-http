@@ -33,7 +33,7 @@ async def get_jobs(request: Request):
         updated_at = datetime.now(tz=UTC).isoformat()
         data = await get_jobs_data(arq_conn=request.state.arq_conn)
         response = JSONResponse(
-            content={"jobs": data, "updated_at": updated_at, "status": "success"},
+            content={"updated_at": updated_at, "status": "success", **data},
             status_code=200
         )
     except Exception as e:

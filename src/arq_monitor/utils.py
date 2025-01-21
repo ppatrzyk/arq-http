@@ -54,10 +54,10 @@ async def _get_job_results(arq_conn: ArqRedis):
     Lit job results
     """
     all_job_results = await arq_conn.all_job_results()
-    by_queue = dict()
+    results = dict()
     for queue, jobs in itertools.groupby(all_job_results, lambda job: job.queue_name):
-        by_queue[queue] = {"results": tuple(_job_result_reformat(job) for job in jobs)}
-    return by_queue
+        results[queue] = tuple(_job_result_reformat(job) for job in jobs)
+    return results
 
 async def _get_queue(arq_conn: ArqRedis, queue_name: str):
     """
@@ -71,11 +71,13 @@ async def get_jobs_data(arq_conn: ArqRedis):
     """
     Get jobs data main function
     """
-    data = await _get_job_results(arq_conn=arq_conn)
-    get_queue_tasks = tuple(_get_queue(arq_conn=arq_conn, queue_name=queue_name) for queue_name in data.keys())
+    results = await _get_job_results(arq_conn=arq_conn)
+    get_queue_tasks = tuple(_get_queue(arq_conn=arq_conn, queue_name=queue_name) for queue_name in results.keys())
     get_queue_results = await asyncio.gather(*get_queue_tasks)
-    for queue_name, queue_data in zip(data.keys(), get_queue_results):
-        data[queue_name]["queue"] = queue_data
+    queues = dict()
+    for queue_name, queue_data in zip(results.keys(), get_queue_results):
+        queues[queue_name] = queue_data
+    data = {"results": results, "queues": queues, }
     return data
 
 async def compute_stats(data: dict):
