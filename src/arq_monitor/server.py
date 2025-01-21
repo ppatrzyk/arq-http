@@ -16,7 +16,8 @@ from arq import create_pool
 from arq.connections import ArqRedis
 
 from .config import ARQ_CONN_CONFIG, logger, STATIC, TEMPLATES
-from .utils import compute_stats, create_new_job, get_jobs_data
+from .stats import compute_stats
+from .utils import create_new_job, get_jobs_data
 
 async def http_exception(request: Request, exc: HTTPException):
     content = {
@@ -83,8 +84,11 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 # TODO push only if data has changed?
                 await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
-                stats_data = await compute_stats(jobs_data)
+                stats_data = compute_stats(jobs_data)
                 # TODO return generated jinja templates here
+                # env = JinjaEnvironment()
+                # compose_template = env.get_template("name.html.jinja")
+                # config_template.render(**kwargs)
                 data = {
                     "queues-data": jobs_data.get("queues"),
                     "queues-stats": stats_data.get("queues_stats"),
