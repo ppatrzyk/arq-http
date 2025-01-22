@@ -38,13 +38,14 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
                 stats_data = compute_stats(jobs_data)
-                stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
+                queuestats_template = JINJA_ENV.get_template("components/queuestats.html.jinja")
+                resultsstats_template = JINJA_ENV.get_template("components/resultsstats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
                 data = {
                     "queues-data": table_template.render(data=jobs_data.get("queues").get('arq:myqueue')),
-                    "queues-stats": stats_template.render(data=stats_data.get("queues_stats")),
+                    "queues-stats": queuestats_template.render(data=stats_data.get("queues_stats").get('arq:myqueue')),
                     "jobs-data": table_template.render(data=jobs_data.get("results").get('arq:myqueue')),
-                    "jobs-stats": stats_template.render(data=stats_data.get("results_stats")),
+                    # "jobs-stats": resultsstats_template.render(data=stats_data.get("results_stats").get('arq:myqueue')),
                 }
                 for event_name, event_data in data.items():
                     event = {

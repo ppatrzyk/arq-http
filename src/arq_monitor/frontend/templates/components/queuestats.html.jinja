@@ -1,0 +1,23 @@
+{# TODO conditional on whether stats exists #}
+
+<div id="{{ data.ts_id }}"></div>
+<script>
+{% with plot_id=data.ts_id, x=data.ts_x, y=data.ts_y, title="Time series: Time in queue", y_label="time in queue" %}
+    {% include "components/timeseries.js.jinja" %}
+{% endwith %}
+</script>
+
+{# TODO x time false on this #}
+{# <div id="{{ data.cdf_id }}"></div>
+<script>
+{% with plot_id=data.cdf_id, x=data.cdf_x, y=data.cdf_y, title="CDF: Time in queue", y_label="time in queue" %}
+    {% include "components/timeseries.js.jinja" %}
+{% endwith %}
+</script> #}
+
+<div id="{{ data.hist_id }}"></div>
+<script>
+{% with plot_id=data.hist_id, x=data.hist_edges, y=data.hist_vals, title="Histogram: Time in queue", y_label="time in queue" %}
+    {% include "components/histogram.js.jinja" %}
+{% endwith %}
+</script>

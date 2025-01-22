@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arq Monitor</title>
     <link rel="stylesheet" href="{{ request.app.url_path_for('static', path='terminal-0.7.4.min.css') }}" />
+    <link rel="stylesheet" href="{{ request.app.url_path_for('static', path='uPlot.min.css') }}" />
     <script src="{{ request.app.url_path_for('static', path='htmx.org-2.0.4.js') }}"></script>
     <script src="{{ request.app.url_path_for('static', path='htmx-ext-sse-2.2.2.js') }}"></script>
+    <script src="{{ request.app.url_path_for('static', path='uPlot.iife.min.js') }}"></script>
 </head>
 <body>
     {% block content %}{% endblock %}

@@ -2,9 +2,11 @@
 Compute stats
 """
 
+from datetime import datetime
 import itertools
 import numpy as np
 from operator import itemgetter
+from uuid import uuid4
 
 def _get_stats(jobs: tuple, x_name: str, y_name: str):
     """
@@ -14,6 +16,8 @@ def _get_stats(jobs: tuple, x_name: str, y_name: str):
     if len(jobs) >= 2:
         stats = dict()
         x = (job.get(x_name) for job in jobs)
+        if x_name == "start_time":
+            x = (datetime.fromisoformat(date).timestamp() for date in x)
         y = (job.get(y_name) for job in jobs)
         x, y = [list(x) for x in zip(*sorted(zip(x, y), key=itemgetter(0)))]
         hist_vals, hist_edges = np.histogram(y, bins=10)
@@ -21,10 +25,13 @@ def _get_stats(jobs: tuple, x_name: str, y_name: str):
         hist_vals.append(hist_vals[-1])
         hist_edges = hist_edges.tolist()
         stats = {
-            "ts_start_time": x,
-            "ts_time_exec": y,
+            "ts_id": str(uuid4()),
+            "ts_x": x,
+            "ts_y": y,
+            "cdf_id": str(uuid4()),
             "cdf_x": tuple(range(1, 101)),
             "cdf_y": np.percentile(y, range(1, 101)).tolist(),
+            "hist_id": str(uuid4()),
             "hist_edges": hist_edges,
             "hist_vals": hist_vals,
         }

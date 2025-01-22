@@ -1,13 +1,13 @@
 plotDiv = document.getElementById("{{ plot_id }}");
 
 // line
-const data = [
-  [1546300800, 1546387200],
-  [90, 15],
+var plotData = [
+  {{ x }},
+  {{ y }}
 ];
 
-let opts = {
-  title: "My Chart {{ plot_id }}",
+var plotOpts = {
+  title: "{{ title }}",
   id: "{{ plot_id }}",
   class: "my-chart",
   width: 800,
@@ -17,10 +17,12 @@ let opts = {
     {
       show: true,
       spanGaps: false,
-      label: "y value label",
+      label: "{{ y_label }}",
       value: (self, rawValue) => rawValue.toFixed(2),
       stroke: "blue",
       width: 1,
     },
   ],
 };
+
+var plot = new uPlot(plotOpts, plotData, plotDiv);

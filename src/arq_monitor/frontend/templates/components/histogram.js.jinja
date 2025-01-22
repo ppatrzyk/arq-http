@@ -1,27 +1,21 @@
 plotDiv = document.getElementById("{{ plot_id }}");
 
-let data = [
-  [
-    0.00014420439857032452, 0.10008887366470137, 0.20003354293083242,
-    0.29997821219696347, 0.3999228814630945, 0.49986755072922556,
-    0.5998122199953566, 0.6997568892614877, 0.7997015585276187,
-    0.8996462277937497, 0.9995908970598808,
-  ],
-  [121, 107, 87, 100, 98, 107, 103, 99, 93, 85, 85],
+var plotdData = [
+  {{ x }},
+  {{ y }}
 ];
 
-let bars = uPlot.paths.bars({
+var bars = uPlot.paths.bars({
   align: 1,
   size: [1, Infinity],
   gap: 0,
 });
 
-let opts = {
-  title: "histogram {{ plot_id }}",
+var plotOpts = {
+  title: "{{ title }}",
   id: "{{ plot_id }}",
-  class: "my-chart",
-  width: 400,
-  height: 200,
+  width: 800,
+  height: 600,
   scales: {
     x: {
       time: false,
@@ -39,4 +33,4 @@ let opts = {
   ],
 };
 
-let uplot = new uPlot(opts, data, plotDiv);
+var plot = new uPlot(plotOpts, plotdData, plotDiv);
