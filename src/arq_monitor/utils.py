@@ -1,7 +1,7 @@
 import asyncio
 from arq.connections import ArqRedis
 from arq.jobs import JobDef, JobResult
-
+from datetime import datetime, timedelta, UTC
 import itertools
 
 def _value_repr(val):
@@ -77,7 +77,7 @@ async def get_jobs_data(arq_conn: ArqRedis):
     queues = dict()
     for queue_name, queue_data in zip(results.keys(), get_queue_results):
         queues[queue_name] = queue_data
-    data = {"results": results, "queues": queues, }
+    data = {"results": results, "queues": queues, "updated_at": datetime.now(tz=UTC).isoformat()}
     return data
 
 async def create_new_job(arq_conn: ArqRedis, kwargs: dict):

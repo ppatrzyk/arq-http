@@ -9,15 +9,15 @@ import anyio
 from anyio.streams.memory import MemoryObjectSendStream
 import asyncio
 import contextlib
-from datetime import datetime, timedelta, UTC
 from functools import partial
 
 from arq import create_pool
 from arq.connections import ArqRedis
 
+from .api import api_routes
 from .config import ARQ_CONN_CONFIG, JINJA_ENV, logger, STATIC, TEMPLATES
 from .stats import compute_stats
-from .utils import create_new_job, get_jobs_data
+from .utils import get_jobs_data
 
 async def http_exception(request: Request, exc: HTTPException):
     content = {
@@ -25,42 +25,6 @@ async def http_exception(request: Request, exc: HTTPException):
         "detail": exc.detail
     }
     return JSONResponse(content=content, status_code=exc.status_code)
-
-async def get_jobs(request: Request):
-    """
-    Get list of jobs
-    """
-    try:
-        updated_at = datetime.now(tz=UTC).isoformat()
-        data = await get_jobs_data(arq_conn=request.state.arq_conn)
-        response = JSONResponse(
-            content={"updated_at": updated_at, "status": "success", **data},
-            status_code=200
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    return response
-
-async def create_job(request: Request):
-    """
-    Get status of existing job
-    """
-    try:
-        data = await request.json()
-        job = await create_new_job(arq_conn=request.state.arq_conn, kwargs=data)
-        if job is None:
-            response = JSONResponse(
-                content={"status": "error", "detail": "job not created"},
-                status_code=400
-            )
-        else:
-            response = JSONResponse(
-                content={"status": "success", "job_id": job.job_id},
-                status_code=201
-            )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    return response
 
 async def get_dashboard(request: Request):
     """
@@ -130,8 +94,7 @@ async def lifespan(_app):
 routes=[
     Route(path='/', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
     Route(path='/dashboard-data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
-    Route(path='/jobs', endpoint=get_jobs, methods=["GET", ], name="get_jobs"),
-    Route(path='/jobs', endpoint=create_job, methods=["POST", ], name="create_job"),
+    Mount("/api", routes=api_routes, name="api"),
     Mount("/static", app=STATIC, name="static"),
 ]
 
