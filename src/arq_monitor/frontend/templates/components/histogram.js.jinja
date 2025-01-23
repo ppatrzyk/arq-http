@@ -1,4 +1,4 @@
-plotDiv = document.getElementById("{{ plot_id }}");
+var plotDiv = document.getElementById("{{ plot_id }}");
 
 var plotdData = [
   {{ x }},
@@ -12,7 +12,7 @@ var bars = uPlot.paths.bars({
 });
 
 var plotOpts = {
-  title: "{{ title }}",
+  title: "Histogram: {{ variable }}",
   id: "{{ plot_id }}",
   width: 800,
   height: 600,
@@ -24,14 +24,14 @@ var plotOpts = {
   },
   series: [
     {
-      label: "{{ x_label }}",
+      label: "{{ variable }}",
     },
     {
       width: 1,
       stroke: "#00f",
       fill: "rgb(0,0,255,0.1)",
       paths: bars,
-      label: "{{ y_label }}",
+      label: "count",
     },
   ],
 };

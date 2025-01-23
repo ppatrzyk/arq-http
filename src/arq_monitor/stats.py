@@ -25,6 +25,7 @@ def _get_stats(jobs: tuple, x_name: str, y_name: str):
         hist_vals.append(hist_vals[-1])
         hist_edges = hist_edges.tolist()
         stats = {
+            "y_name": y_name,
             "ts_id": str(uuid4()),
             "ts_x": x,
             "ts_y": y,

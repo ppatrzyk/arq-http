@@ -1,4 +1,4 @@
-plotDiv = document.getElementById("{{ plot_id }}");
+var plotDiv = document.getElementById("{{ plot_id }}");
 
 var plotData = [
   {{ x }},
@@ -6,7 +6,7 @@ var plotData = [
 ];
 
 var plotOpts = {
-  title: "{{ title }}",
+  title: "{{ title_prefix }}: {{ y_label }}",
   id: "{{ plot_id }}",
   class: "my-chart",
   width: 800,
@@ -24,7 +24,6 @@ var plotOpts = {
       show: true,
       spanGaps: false,
       label: "{{ y_label }}",
-      value: (self, rawValue) => rawValue.toFixed(2),
       stroke: "blue",
       width: 1,
     },
