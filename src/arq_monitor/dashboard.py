@@ -74,5 +74,5 @@ async def get_dashboard_data(request: Request):
 
 dashboard_routes = [
     Route(path='/', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
-    Route(path='/dashboard-data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
+    Route(path='/data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
 ]

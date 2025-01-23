@@ -2,18 +2,17 @@
 
 <div id="{{ data.ts_id }}"></div>
 <script>
-{% with plot_id=data.ts_id, x=data.ts_x, y=data.ts_y, title="Time series: Time in queue", y_label="time in queue" %}
+{% with plot_id=data.ts_id, x=data.ts_x, y=data.ts_y, time_col="true", title="Time series: Time in queue", y_label="time in queue" %}
     {% include "components/timeseries.js.jinja" %}
 {% endwith %}
 </script>
 
-{# TODO x time false on this #}
-{# <div id="{{ data.cdf_id }}"></div>
+<div id="{{ data.cdf_id }}"></div>
 <script>
-{% with plot_id=data.cdf_id, x=data.cdf_x, y=data.cdf_y, title="CDF: Time in queue", y_label="time in queue" %}
+{% with plot_id=data.cdf_id, x=data.cdf_x, y=data.cdf_y, time_col="false", title="CDF: Time in queue", y_label="time in queue" %}
     {% include "components/timeseries.js.jinja" %}
 {% endwith %}
-</script> #}
+</script>
 
 <div id="{{ data.hist_id }}"></div>
 <script>

@@ -1,6 +1,5 @@
 plotDiv = document.getElementById("{{ plot_id }}");
 
-// line
 var plotData = [
   {{ x }},
   {{ y }}
@@ -12,6 +11,11 @@ var plotOpts = {
   class: "my-chart",
   width: 800,
   height: 600,
+  scales: {
+    x: {
+      time: {{ time_col }},
+    },
+  },
   series: [
     {},
     {
