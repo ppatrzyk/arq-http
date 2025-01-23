@@ -23,12 +23,15 @@ var plotOpts = {
     },
   },
   series: [
-    {},
+    {
+      label: "{{ x_label }}",
+    },
     {
       width: 1,
       stroke: "#00f",
       fill: "rgb(0,0,255,0.1)",
       paths: bars,
+      label: "{{ y_label }}",
     },
   ],
 };

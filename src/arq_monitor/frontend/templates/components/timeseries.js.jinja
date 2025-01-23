@@ -13,11 +13,13 @@ var plotOpts = {
   height: 600,
   scales: {
     x: {
-      time: {{ time_col }},
+      time: {{ is_time_col }},
     },
   },
   series: [
-    {},
+    {
+      label: "{{ x_label }}",
+    },
     {
       show: true,
       spanGaps: false,
