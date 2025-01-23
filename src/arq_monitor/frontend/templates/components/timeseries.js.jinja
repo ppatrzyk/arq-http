@@ -1,5 +1,8 @@
 var plotDiv = document.getElementById("{{ plot_id }}");
 
+var plotWidth = Math.floor(plotDiv.offsetWidth * 0.8);
+var plotHeight = Math.floor(plotDiv.offsetWidth * 0.5);
+
 var plotData = [
   {{ x }},
   {{ y }}
@@ -9,8 +12,8 @@ var plotOpts = {
   title: "{{ title_prefix }}: {{ y_label }}",
   id: "{{ plot_id }}",
   class: "my-chart",
-  width: 800,
-  height: 600,
+  width: plotWidth,
+  height: plotHeight,
   scales: {
     x: {
       time: {{ is_time_col }},
