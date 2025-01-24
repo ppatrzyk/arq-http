@@ -1,22 +1,27 @@
 {# TODO conditional on whether stats exists #}
 
-<div id="{{ data.ts_id }}"></div>
-<script>
-{% with plot_id=data.ts_id, x=data.ts_x, y=data.ts_y, is_time_col="true", title_prefix="Time series", x_label="time", y_label=data.y_name %}
-    {% include "components/timeseries.js.jinja" %}
-{% endwith %}
-</script>
+<div class="viz-container">
 
-<div id="{{ data.cdf_id }}"></div>
-<script>
-{% with plot_id=data.cdf_id, x=data.cdf_x, y=data.cdf_y, is_time_col="false", title_prefix="CDF", x_label="percentile", y_label=data.y_name %}
-    {% include "components/timeseries.js.jinja" %}
-{% endwith %}
-</script>
+    <div id="{{ data.ts_id }}" class="viz-item"></div>
+    <script>
+    {% with plot_id=data.ts_id, x=data.ts_x, y=data.ts_y, is_time_col="true", title_prefix="Time series", x_label="time", y_label=data.y_name %}
+        {% include "components/timeseries.js.jinja" %}
+    {% endwith %}
+    </script>
 
-<div id="{{ data.hist_id }}"></div>
-<script>
-{% with plot_id=data.hist_id, x=data.hist_edges, y=data.hist_vals, variable=data.y_name %}
-    {% include "components/histogram.js.jinja" %}
-{% endwith %}
-</script>
+    <div id="{{ data.cdf_id }}" class="viz-item"></div>
+    <script>
+    {% with plot_id=data.cdf_id, x=data.cdf_x, y=data.cdf_y, is_time_col="false", title_prefix="CDF", x_label="percentile", y_label=data.y_name %}
+        {% include "components/timeseries.js.jinja" %}
+    {% endwith %}
+    </script>
+
+    <div id="{{ data.hist_id }}" class="viz-item"></div>
+    <script>
+    {% with plot_id=data.hist_id, x=data.hist_edges, y=data.hist_vals, variable=data.y_name %}
+        {% include "components/histogram.js.jinja" %}
+    {% endwith %}
+    </script>
+
+</div>
+<p>stuff under grid</p>

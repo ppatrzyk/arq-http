@@ -1,7 +1,7 @@
 var plotDiv = document.getElementById("{{ plot_id }}");
 
-var plotWidth = Math.floor(plotDiv.offsetWidth * 0.8);
-var plotHeight = Math.floor(plotDiv.offsetWidth * 0.5);
+var plotWidth = Math.floor(plotDiv.offsetWidth);
+var plotHeight = Math.floor(plotDiv.offsetWidth * (2.0/3.0));
 
 var plotData = [
   {{ x }},
@@ -11,7 +11,7 @@ var plotData = [
 var plotOpts = {
   title: "{{ title_prefix }}: {{ y_label }}",
   id: "{{ plot_id }}",
-  class: "my-chart",
+  class: "viz-item",
   width: plotWidth,
   height: plotHeight,
   scales: {

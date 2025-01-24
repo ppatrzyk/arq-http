@@ -1,7 +1,20 @@
 :root {
-    --global-font-size: 16px
+    --global-font-size: 16px;
+    --page-width: 80em;
 }
 .container {
-    margin-top: calc(var(--page-width) / 8);
-    margin-bottom: calc(var(--page-width) / 8);
+    margin-top: 4em;
+    margin-bottom: 4em;
+}
+.viz-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 10px 10px;
+    align-items: center;
+    justify-items: center;
+}
+.viz-item {
+    aspect-ratio : 3 / 2;
+    width: 100%;
 }

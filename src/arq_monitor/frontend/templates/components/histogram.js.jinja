@@ -1,7 +1,7 @@
 var plotDiv = document.getElementById("{{ plot_id }}");
 
-var plotWidth = Math.floor(plotDiv.offsetWidth * 0.8);
-var plotHeight = Math.floor(plotDiv.offsetWidth * 0.5);
+var plotWidth = Math.floor(plotDiv.offsetWidth);
+var plotHeight = Math.floor(plotDiv.offsetWidth * (2.0/3.0));
 
 var plotdData = [
   {{ x }},
@@ -17,6 +17,7 @@ var bars = uPlot.paths.bars({
 var plotOpts = {
   title: "Histogram: {{ variable }}",
   id: "{{ plot_id }}",
+  class: "viz-item",
   width: plotWidth,
   height: plotHeight,
   scales: {
