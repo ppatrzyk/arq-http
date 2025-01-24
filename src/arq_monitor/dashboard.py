@@ -15,6 +15,19 @@ from .config import JINJA_ENV, logger, TEMPLATES
 from .stats import compute_stats
 from .utils import get_jobs_data
 
+async def list_dashboards(request: Request):
+    """
+    List available dashboards
+    """
+    jobs_data = await get_jobs_data(request.state.arq_conn)
+    queue_names = tuple(jobs_data.get("results", {}).keys())
+    response = TEMPLATES.TemplateResponse(
+        request=request,
+        name="dashboard_listing.html.jinja",
+        context={"queue_names": queue_names}
+    )
+    return response
+
 async def get_dashboard(request: Request):
     """
     Get dashboard page
@@ -27,7 +40,7 @@ async def get_dashboard(request: Request):
     )
     return response
 
-async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: ArqRedis):
+async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: ArqRedis, queue_name: str):
     """
     adapted from https://github.com/sysid/sse-starlette/blob/main/examples/no_async_generators.py#L22
     """
@@ -40,12 +53,12 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 stats_data = compute_stats(jobs_data)
                 stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
-                # TODO queues: loop queue names; results: loop queues x functions
                 data = {
-                    "queues-data": table_template.render(data=jobs_data.get("queues").get('arq:myqueue')),
-                    "queues-stats": stats_template.render(data=stats_data.get("queues_stats").get('arq:myqueue')),
-                    "jobs-data": table_template.render(data=jobs_data.get("results").get('arq:myqueue')),
-                    "jobs-stats": stats_template.render(data=stats_data.get("results_stats").get('arq:myqueue').get("get_random_numbers")),
+                    "queues-data": table_template.render(data=jobs_data.get("queues").get(queue_name)),
+                    "queues-stats": stats_template.render(data=stats_data.get("queues_stats").get(queue_name)),
+                    "jobs-data": table_template.render(data=jobs_data.get("results").get(queue_name)),
+                    # todo loops all functions
+                    "jobs-stats": stats_template.render(data=stats_data.get("results_stats").get(queue_name).get("get_random_numbers")),
                 }
                 for event_name, event_data in data.items():
                     event = {
@@ -63,16 +76,18 @@ async def get_dashboard_data(request: Request):
     """
     Get dashboard data
     """
+    queue_name = request.path_params['queue_name']
     send_chan, recv_chan = anyio.create_memory_object_stream(max_buffer_size=10)
     arq_conn = request.state.arq_conn
     response = EventSourceResponse(
-        data_sender_callable=partial(dashboard_data_gen, send_chan, arq_conn),
+        data_sender_callable=partial(dashboard_data_gen, send_chan, arq_conn, queue_name),
         content=recv_chan,
         send_timeout=5
     )
     return response
 
 dashboard_routes = [
-    Route(path='/', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
-    Route(path='/data', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
+    Route(path='/', endpoint=list_dashboards, methods=["GET", ], name="list_dashboards"),
+    Route(path='/{queue_name:str}', endpoint=get_dashboard, methods=["GET", ], name="get_dashboard"),
+    Route(path='/data/{queue_name:str}', endpoint=get_dashboard_data, methods=["GET", ], name="get_dashboard_data"),
 ]

@@ -1,0 +1,9 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+    <h1>Dashboards</h1>
+    <ul>
+    {% for queue_name in queue_names %}
+        <li><a href="{{ request.app.url_path_for('dashboard:get_dashboard', queue_name=queue_name) }}">{{ queue_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

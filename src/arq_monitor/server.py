@@ -15,7 +15,7 @@ async def dashboard_redirect(request: Request):
     """
     Redirect to dashboard
     """
-    url = request.url_for("dashboard:get_dashboard")
+    url = request.url_for("dashboard:list_dashboards")
     response = RedirectResponse(url=url)
     return response
 

@@ -1,7 +1,7 @@
 {% extends "base.html.jinja" %}
 {% block content %}
-    <h1>Dashboard</h1>
-    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data') }}" >
+    <h1>Dashboard: {{ request.path_params['queue_name'] }}</h1>
+    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data', queue_name=request.path_params['queue_name']) }}" >
         <h2>Queue items</h2>
         <div sse-swap="queues-data"></div>
         <h2>Queue stats</h2>
