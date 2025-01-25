@@ -5,10 +5,21 @@
         <h2>Queue items</h2>
         <div sse-swap="queues-data"></div>
         <h2>Queue stats</h2>
+        <div id="queues-plots" class="viz-container">
+            <div id="queues-ts-plot" class="viz-item"></div>
+            <div id="queues-cdf-plot" class="viz-item"></div>
+            <div id="queues-hist-plot" class="viz-item"></div>
+        </div>
         <div sse-swap="queues-stats"></div>
         <h2>Jobs items</h2>
         <div sse-swap="jobs-data"></div>
         <h2>Jobs stats</h2>
+        {# TODO loops for all functions #}
+        <div id="jobs-plots" class="viz-container">
+            <div id="jobs-ts-plot" class="viz-item"></div>
+            <div id="jobs-cdf-plot" class="viz-item"></div>
+            <div id="jobs-hist-plot" class="viz-item"></div>
+        </div>
         <div sse-swap="jobs-stats"></div>
     </div>
 {% endblock %}

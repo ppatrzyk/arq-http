@@ -1,7 +1,8 @@
-var plotDiv = document.getElementById("{{ plot_id }}");
+var plotDiv = document.getElementById("{{ parent_id }}");
+var plotElement = document.getElementById("{{ plot_id }}");
 
-var plotWidth = Math.floor(plotDiv.offsetWidth);
-var plotHeight = Math.floor(plotDiv.offsetWidth * (2.0/3.0));
+var plotWidth = Math.floor(plotElement.offsetWidth);
+var plotHeight = Math.floor(plotElement.offsetWidth * (2.0/3.0));
 
 var plotData = [
   {{ x }},
@@ -33,4 +34,5 @@ var plotOpts = {
   ],
 };
 
+plotElement.remove()
 var plot = new uPlot(plotOpts, plotData, plotDiv);

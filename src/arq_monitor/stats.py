@@ -26,13 +26,10 @@ def _get_stats(jobs: tuple, x_name: str, y_name: str):
         hist_edges = hist_edges.tolist()
         stats = {
             "y_name": y_name,
-            "ts_id": str(uuid4()),
             "ts_x": x,
             "ts_y": y,
-            "cdf_id": str(uuid4()),
             "cdf_x": list(range(1, 101)),
             "cdf_y": np.percentile(y, range(1, 101)).tolist(),
-            "hist_id": str(uuid4()),
             "hist_edges": hist_edges,
             "hist_vals": hist_vals,
         }
