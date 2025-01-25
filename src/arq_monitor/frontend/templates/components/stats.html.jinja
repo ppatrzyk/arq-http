@@ -1,19 +1,19 @@
 {# TODO conditional on whether stats exists #}
 
 <script>
-{% with parent_id=plot_ids.parent_id, plot_id=plot_ids.ts_id, x=data.ts_x, y=data.ts_y, is_time_col="true", title_prefix="Time series", x_label="time", y_label=data.y_name %}
+{% with parent_id=ids.parent_id, plot_id=ids.ts_id, x=data.ts_x, y=data.ts_y, is_time_col="true", title_prefix="Time series", x_label="time", y_label=data.y_name %}
     {% include "components/timeseries.js.jinja" %}
 {% endwith %}
 </script>
 
 <script>
-{% with parent_id=plot_ids.parent_id, plot_id=plot_ids.cdf_id, x=data.cdf_x, y=data.cdf_y, is_time_col="false", title_prefix="CDF", x_label="percentile", y_label=data.y_name %}
+{% with parent_id=ids.parent_id, plot_id=ids.cdf_id, x=data.cdf_x, y=data.cdf_y, is_time_col="false", title_prefix="CDF", x_label="percentile", y_label=data.y_name %}
     {% include "components/timeseries.js.jinja" %}
 {% endwith %}
 </script>
 
 <script>
-{% with parent_id=plot_ids.parent_id, plot_id=plot_ids.hist_id, x=data.hist_edges, y=data.hist_vals, variable=data.y_name %}
+{% with parent_id=ids.parent_id, plot_id=ids.hist_id, x=data.hist_edges, y=data.hist_vals, variable=data.y_name %}
     {% include "components/histogram.js.jinja" %}
 {% endwith %}
 </script>

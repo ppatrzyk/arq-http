@@ -18,3 +18,17 @@
     aspect-ratio : 3 / 2;
     width: 100%;
 }
+table {
+    margin: 0;
+}
+.table-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 10px 10px;
+    align-items: start;
+    justify-items: start;
+}
+.terminal-card {
+    display: none;
+}

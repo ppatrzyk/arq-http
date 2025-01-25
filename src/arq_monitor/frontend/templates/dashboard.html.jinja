@@ -3,6 +3,7 @@
     <h1>Dashboard: {{ request.path_params['queue_name'] }}</h1>
     <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data', queue_name=request.path_params['queue_name']) }}" >
         <h2>Queue items</h2>
+        {# TODO which elements from table can be moved here #}
         <div sse-swap="queues-data"></div>
         <h2>Queue stats</h2>
         <div id="queues-plots" class="viz-container">

@@ -1,10 +1,28 @@
-<table>
-    <thead><tr>
-        {% for col in data[0].keys() %}<th>{{ col|e }}</th>{% endfor %}
-    </tr></thead>
-    <tbody>
-        {% for row in data %}
-            <tr>{% for entry in row.values() %}<td>{{ entry|e }}</td>{% endfor %}</tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-container">
+    <div>
+        <table>
+            <thead><tr>
+                {# {% for col in data[0].keys() %}<th>{{ col|e }}</th>{% endfor %} #}
+                <th>job_id</th>
+            </tr></thead>
+            <tbody>
+                {% for row in data %}
+                    {# <tr>{% for entry in row.values() %}<td>{{ entry|e }}</td>{% endfor %}</tr> #}
+                    {# TODO show time and func name #}
+                    <tr><td><a onclick="Array.from(document.getElementsByClassName('jobs-details')).forEach(el => {el.style.display='none'}); document.getElementById('{{row.job_id}}').style.display='block'">{{ row.job_id|e }}</a></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% for row in data %}
+        <div id="{{ row.job_id }}" class="terminal-card {{ ids.details_class }}">
+            <header>job details</header>
+            <div>
+                {% for name, val in row.items() %}
+                {# TODO formatting, table inside? #}
+                    <p>{{ name|e }}: {{ val|e }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
