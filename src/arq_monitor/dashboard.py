@@ -50,15 +50,15 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 # TODO push only if data has changed?
                 await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
-                stats_data = compute_stats(jobs_data)
+                stats_data = compute_stats(jobs_data, queue_name)
                 stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
                 data = {
                     "queues-data": table_template.render(data=jobs_data.get("queues").get(queue_name)),
-                    "queues-stats": stats_template.render(data=stats_data.get("queues_stats").get(queue_name)),
+                    "queues-stats": stats_template.render(data=stats_data.get("queues_stats")),
                     "jobs-data": table_template.render(data=jobs_data.get("results").get(queue_name)),
                     # todo loops all functions
-                    "jobs-stats": stats_template.render(data=stats_data.get("results_stats").get(queue_name).get("get_random_numbers")),
+                    "jobs-stats": stats_template.render(data=stats_data.get("results_stats").get("get_random_numbers")),
                 }
                 for event_name, event_data in data.items():
                     event = {

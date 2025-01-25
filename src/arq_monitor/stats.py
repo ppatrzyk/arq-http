@@ -38,19 +38,18 @@ def _get_stats(jobs: tuple, x_name: str, y_name: str):
         }
     return stats
 
-def compute_stats(data: dict):
+def compute_stats(data: dict, queue_name: str):
     """
     Compute additional stats on reformatted data
     """
-    results = data.get("results", {})
+    results = data.get("results", {}).get(queue_name, [])
     results_stats = dict()
     queues_stats = dict()
-    for queue_name, results_data in results.items():
-        queues_stats[queue_name] = _get_stats(results_data, "start_time", "time_inqueue")
-        stats = dict()
-        for function, func_jobs in itertools.groupby(results_data, lambda job: job.get("function")):
-            func_jobs = tuple(func_jobs)
-            stats[function] = _get_stats(func_jobs, "start_time", "time_exec")
-        results_stats[queue_name] = stats
+    queues_stats = _get_stats(results, "start_time", "time_inqueue")
+    stats = dict()
+    for function, func_jobs in itertools.groupby(results, lambda job: job.get("function")):
+        func_jobs = tuple(func_jobs)
+        stats[function] = _get_stats(func_jobs, "start_time", "time_exec")
+    results_stats = stats
     data = {"results_stats": results_stats, "queues_stats": queues_stats, }
     return data
