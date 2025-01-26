@@ -32,11 +32,14 @@ async def get_dashboard(request: Request):
     """
     Get dashboard page
     """
-    data = {}
+    queue_name = request.path_params['queue_name']
+    jobs_data = await get_jobs_data(request.state.arq_conn)
+    results = jobs_data.get("results", {}).get(queue_name, [])
+    functions = set(entry.get("function") for entry in results)
     response = TEMPLATES.TemplateResponse(
         request=request,
         name="dashboard.html.jinja",
-        context=data
+        context={"functions": functions}
     )
     return response
 
@@ -53,6 +56,15 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 stats_data = compute_stats(jobs_data, queue_name)
                 stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
+                job_stats_list = list()
+                for function, job_stats_data in stats_data.get("results_stats").items():
+                    entry = stats_template.render(
+                        data=job_stats_data,
+                        ids={"parent_id": "jobs-plots", "cdf_id": f"{function}-jobs-cdf-plot", "hist_id": f"{function}-jobs-hist-plot", "ts_id": f"{function}-jobs-ts-plot", },
+                        title_label=function
+                    )
+                    job_stats_list.append(entry)
+                job_stats = "\n".join(job_stats_list)
                 data = {
                     "queues-data": table_template.render(
                         data=jobs_data.get("queues").get(queue_name)
@@ -65,12 +77,7 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                     "jobs-data": table_template.render(
                         data=jobs_data.get("results").get(queue_name)
                     ),
-                    # todo loops all functions
-                    "jobs-stats": stats_template.render(
-                        data=stats_data.get("results_stats").get("get_random_numbers"),
-                        ids={"parent_id": "jobs-plots", "cdf_id": "jobs-cdf-plot", "hist_id": "jobs-hist-plot", "ts_id": "jobs-ts-plot", },
-                        title_label="get_random_numbers"
-                    ),
+                    "jobs-stats": job_stats,
                 }
                 for event_name, event_data in data.items():
                     event = {

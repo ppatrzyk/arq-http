@@ -27,11 +27,12 @@
 
         <section>
             <h2>Jobs stats</h2>
-            {# TODO loops for all functions #}
             <div id="jobs-plots" class="viz-container">
-                <div id="jobs-ts-plot" class="viz-item"></div>
-                <div id="jobs-cdf-plot" class="viz-item"></div>
-                <div id="jobs-hist-plot" class="viz-item"></div>
+            {% for function in functions %}
+                <div id="{{ function }}-jobs-ts-plot" class="viz-item"></div>
+                <div id="{{ function }}-jobs-cdf-plot" class="viz-item"></div>
+                <div id="{{ function }}-jobs-hist-plot" class="viz-item"></div>
+            {% endfor %}
             </div>
             <div sse-swap="jobs-stats"></div>
         </section>
