@@ -1,13 +1,16 @@
 <table>
     <thead><tr>
-        {# {% for col in data[0].keys() %}<th>{{ col|e }}</th>{% endfor %} #}
         <th>job_id</th>
+        <th>enqueue_time</th>
+        <th>function</th>
     </tr></thead>
     <tbody>
         {% for row in data %}
-            {# <tr>{% for entry in row.values() %}<td>{{ entry|e }}</td>{% endfor %}</tr> #}
-            {# TODO show time and func name #}
-            <tr><td><a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ row.job_id }}').content, true)); document.getElementById('dialog-{{ row.job_id }}').showModal()">{{ row.job_id|e }}</a></td></tr>
+            <tr>
+                <td><a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ row.job_id }}').content, true)); document.getElementById('dialog-{{ row.job_id }}').showModal()">{{ row.job_id[:4]|e }}...</a></td>
+                <td>{{ row.enqueue_time|e }}</td>
+                <td><code>{{ row.function|e }}</code></td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
@@ -17,10 +20,20 @@
             <div class="terminal-card">
                 <header>job details</header>
                 <div>
-                    {% for name, val in row.items() %}
-                    {# TODO formatting, table inside? #}
-                        <p>{{ name|e }}: {{ val|e }}</p>
-                    {% endfor %}
+                    <table>
+                        <thead>
+                            <th>variable</th>
+                            <th>value</th>
+                        </thead>
+                        <tbody>
+                            {% for name, val in row.items() %}
+                                <tr><td>{{ name|e }}</td><td>{{ val|e }}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <form method="dialog">
+                        <button type="submit" class="btn btn-default">close</button>
+                    </form>
                 </div>
             </div>
         </dialog>

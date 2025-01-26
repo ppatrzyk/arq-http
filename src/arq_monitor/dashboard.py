@@ -55,21 +55,21 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
                 data = {
                     "queues-data": table_template.render(
-                        data=jobs_data.get("queues").get(queue_name),
-                        ids={"details_class": "queues-details"}
+                        data=jobs_data.get("queues").get(queue_name)
                     ),
                     "queues-stats": stats_template.render(
                         data=stats_data.get("queues_stats"),
-                        ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", }
+                        ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", },
+                        title_label="queue"
                     ),
                     "jobs-data": table_template.render(
-                        data=jobs_data.get("results").get(queue_name),
-                        ids={"details_class": "jobs-details"}
+                        data=jobs_data.get("results").get(queue_name)
                     ),
                     # todo loops all functions
                     "jobs-stats": stats_template.render(
                         data=stats_data.get("results_stats").get("get_random_numbers"),
-                        ids={"parent_id": "jobs-plots", "cdf_id": "jobs-cdf-plot", "hist_id": "jobs-hist-plot", "ts_id": "jobs-ts-plot", }
+                        ids={"parent_id": "jobs-plots", "cdf_id": "jobs-cdf-plot", "hist_id": "jobs-hist-plot", "ts_id": "jobs-ts-plot", },
+                        title_label="get_random_numbers"
                     ),
                 }
                 for event_name, event_data in data.items():
