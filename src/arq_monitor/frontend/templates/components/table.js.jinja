@@ -1,0 +1,12 @@
+
+var table = document.getElementById('{{ table_id }}');
+
+var data_table = new simpleDatatables.DataTable(table, {
+    perPage: 10,
+    perPageSelect: [10, 25, 50, 100],
+    type: "html",
+    layout: {
+        top: "",
+        bottom: "{select}{info}{pager}"
+    },
+});

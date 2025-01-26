@@ -15,6 +15,8 @@ from .config import JINJA_ENV, logger, TEMPLATES
 from .stats import compute_stats
 from .utils import get_jobs_data
 
+NO_DATA = """<div>no data available</div>"""
+
 async def list_dashboards(request: Request):
     """
     List available dashboards
@@ -56,28 +58,38 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 stats_data = compute_stats(jobs_data, queue_name)
                 stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
-                job_stats_list = list()
+                queues_data = queues_stats = results_data = results_stats = NO_DATA
+                if jobs_data.get("queues").get(queue_name):
+                    queues_data = table_template.render(
+                        data=jobs_data.get("queues").get(queue_name),
+                        table_id="queues-table"
+                    )
+                if stats_data.get("queues_stats"):
+                    queues_stats = stats_template.render(
+                        data=stats_data.get("queues_stats"),
+                        ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", },
+                        title_label="queue"
+                    )
+                if jobs_data.get("results").get(queue_name):
+                    results_data = table_template.render(
+                        data=jobs_data.get("results").get(queue_name),
+                        table_id="jobs-table"
+                    )
+                results_stats_list = list()
                 for function, job_stats_data in stats_data.get("results_stats").items():
                     entry = stats_template.render(
                         data=job_stats_data,
                         ids={"parent_id": "jobs-plots", "cdf_id": f"{function}-jobs-cdf-plot", "hist_id": f"{function}-jobs-hist-plot", "ts_id": f"{function}-jobs-ts-plot", },
                         title_label=function
                     )
-                    job_stats_list.append(entry)
-                job_stats = "\n".join(job_stats_list)
+                    results_stats_list.append(entry)
+                if results_stats_list:
+                    results_stats = "\n".join(results_stats_list)
                 data = {
-                    "queues-data": table_template.render(
-                        data=jobs_data.get("queues").get(queue_name)
-                    ),
-                    "queues-stats": stats_template.render(
-                        data=stats_data.get("queues_stats"),
-                        ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", },
-                        title_label="queue"
-                    ),
-                    "jobs-data": table_template.render(
-                        data=jobs_data.get("results").get(queue_name)
-                    ),
-                    "jobs-stats": job_stats,
+                    "queues-data": queues_data,
+                    "queues-stats": queues_stats,
+                    "results-data": results_data,
+                    "results-stats": results_stats,
                 }
                 for event_name, event_data in data.items():
                     event = {

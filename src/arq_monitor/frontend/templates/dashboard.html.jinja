@@ -3,7 +3,7 @@
     <header><h1>Dashboard: {{ request.path_params['queue_name'] }}</h1></header>
     <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data', queue_name=request.path_params['queue_name']) }}" >
         <section>
-            <h2>Queue items</h2>
+            <h2>Queue</h2>
             <div sse-swap="queues-data"></div>
         </section>
         <hr>
@@ -20,13 +20,13 @@
         <hr>
 
         <section>
-            <h2>Jobs items</h2>
-            <div sse-swap="jobs-data"></div>
+            <h2>Results</h2>
+            <div sse-swap="results-data"></div>
         </section>
         <hr>
 
         <section>
-            <h2>Jobs stats</h2>
+            <h2>Results stats</h2>
             <div id="jobs-plots" class="viz-container">
             {% for function in functions %}
                 <div id="{{ function }}-jobs-ts-plot" class="viz-item"></div>
@@ -34,7 +34,7 @@
                 <div id="{{ function }}-jobs-hist-plot" class="viz-item"></div>
             {% endfor %}
             </div>
-            <div sse-swap="jobs-stats"></div>
+            <div sse-swap="results-stats"></div>
         </section>
     </div>
 {% endblock %}

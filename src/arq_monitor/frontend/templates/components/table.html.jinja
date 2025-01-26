@@ -1,4 +1,5 @@
-<table>
+
+<table id="{{ table_id }}">
     <thead><tr>
         <th>job_id</th>
         <th>enqueue_time</th>
@@ -14,6 +15,10 @@
         {% endfor %}
     </tbody>
 </table>
+<script>
+    {% include "components/table.js.jinja" %}
+</script>
+
 {% for row in data %}
     <template id="{{ row.job_id }}">
         <dialog id="dialog-{{ row.job_id }}" >
