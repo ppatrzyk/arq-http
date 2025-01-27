@@ -16,6 +16,8 @@ section {
     gap: 10px 10px;
     align-items: center;
     justify-items: center;
+    margin-bottom: var(--global-line-height);
+    margin-top: var(--global-line-height);
 }
 .viz-item {
     aspect-ratio : 3 / 2;

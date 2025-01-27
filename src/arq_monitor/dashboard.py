@@ -59,10 +59,13 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
                 queues_data = queues_stats = results_data = results_stats = NO_DATA
-                if jobs_data.get("queues").get(queue_name):
+
+                queue = jobs_data.get("queues").get(queue_name, [])
+                if queue:
                     queues_data = table_template.render(
-                        data=jobs_data.get("queues").get(queue_name),
-                        table_id="queues-table"
+                        data=queue,
+                        table_id="queues-table",
+                        table_length=len(queue)
                     )
                 if stats_data.get("queues_stats"):
                     queues_stats = stats_template.render(
@@ -70,10 +73,13 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                         ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", },
                         title_label="queue"
                     )
-                if jobs_data.get("results").get(queue_name):
+                
+                results = jobs_data.get("results").get(queue_name, [])
+                if results:
                     results_data = table_template.render(
-                        data=jobs_data.get("results").get(queue_name),
-                        table_id="jobs-table"
+                        data=results,
+                        table_id="jobs-table",
+                        table_length=len(results)
                     )
                 results_stats_list = list()
                 for function, job_stats_data in stats_data.get("results_stats").items():

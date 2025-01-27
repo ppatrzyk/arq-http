@@ -1,23 +1,42 @@
 
-<table id="{{ table_id }}">
-    <thead><tr>
-        <th>job_id</th>
-        <th>enqueue_time</th>
-        <th>function</th>
-    </tr></thead>
-    <tbody>
-        {% for row in data %}
-            <tr>
-                <td><a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ row.job_id }}').content, true)); document.getElementById('dialog-{{ row.job_id }}').showModal()">{{ row.job_id[:4]|e }}...</a></td>
-                <td>{{ row.enqueue_time|e }}</td>
-                <td><code>{{ row.function|e }}</code></td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<script>
-    {% include "components/table.js.jinja" %}
-</script>
+<div>
+    <span>Items: <strong>{{ table_length }}</strong> </span>
+    <a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ table_id }}').content, true)); document.getElementById('dialog-{{ table_id }}').showModal()">
+        [show all]
+    </a>
+</div>
+<template id="{{ table_id }}">
+    <dialog id="dialog-{{ table_id }}" >
+        <div class="terminal-card">
+            <header>jobs</header>
+            <div>
+                <table>
+                    <thead><tr>
+                        <th>job_id</th>
+                        <th>enqueue_time</th>
+                        <th>function</th>
+                    </tr></thead>
+                    <tbody>
+                        {% for row in data %}
+                            <tr>
+                                <td>
+                                    <a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ row.job_id }}').content, true)); document.getElementById('dialog-{{ row.job_id }}').showModal()">
+                                        {{ row.job_id[:4]|e }}... [details]
+                                    </a>
+                                </td>
+                                <td>{{ row.enqueue_time|e }}</td>
+                                <td><code>{{ row.function|e }}</code></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <form method="dialog">
+                    <button type="submit" class="btn btn-default">close</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+</template>
 
 {% for row in data %}
     <template id="{{ row.job_id }}">
