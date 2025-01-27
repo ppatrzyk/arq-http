@@ -67,7 +67,7 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                         table_id="queues-table",
                         table_length=len(queue)
                     )
-                if stats_data.get("queues_stats"):
+                if stats_data:
                     queues_stats = stats_template.render(
                         data=stats_data.get("queues_stats"),
                         ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", },
@@ -81,16 +81,17 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                         table_id="jobs-table",
                         table_length=len(results)
                     )
-                results_stats_list = list()
-                for function, job_stats_data in stats_data.get("results_stats").items():
-                    entry = stats_template.render(
-                        data=job_stats_data,
-                        ids={"parent_id": "jobs-plots", "cdf_id": f"{function}-jobs-cdf-plot", "hist_id": f"{function}-jobs-hist-plot", "ts_id": f"{function}-jobs-ts-plot", },
-                        title_label=function
-                    )
-                    results_stats_list.append(entry)
-                if results_stats_list:
-                    results_stats = "\n".join(results_stats_list)
+                if stats_data:
+                    results_stats_list = list()
+                    for function, job_stats_data in stats_data.get("results_stats").items():
+                        entry = stats_template.render(
+                            data=job_stats_data,
+                            ids={"parent_id": "jobs-plots", "cdf_id": f"{function}-jobs-cdf-plot", "hist_id": f"{function}-jobs-hist-plot", "ts_id": f"{function}-jobs-ts-plot", },
+                            title_label=function
+                        )
+                        results_stats_list.append(entry)
+                    if results_stats_list:
+                        results_stats = "\n".join(results_stats_list)
                 data = {
                     "queues-data": queues_data,
                     "queues-stats": queues_stats,
