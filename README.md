@@ -10,10 +10,14 @@ tl;dr
 docker run -e REDIS_ADDRESS="redis://localhost:6379" -p 8000:8000 pieca/arq-monitor:0.1
 ```
 
+- dashboards per queue: http://localhost:8000/dashboard/
+- api docs: http://localhost:8000/api/docs
+
 TODO:
     show items in queue 0
     show job status in table
     config how often data is pushed to frontend
+    todo fails when mutiple functions exist
 
 ```
 docker build -t pieca/arq-monitor:0.1 .
@@ -23,7 +27,7 @@ docker build -t pieca/arq-monitor:0.1 .
 
 ```
 # run valkey
-docker run -p 6380:6379 --network arq valkey/valkey:8.0.2
+docker run -p 6380:6379 valkey/valkey:8.0.2
 
 # run dashboard
 REDIS_ADDRESS="redis://localhost:6380" arq-monitor

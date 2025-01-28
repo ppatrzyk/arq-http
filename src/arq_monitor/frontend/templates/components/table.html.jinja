@@ -1,16 +1,16 @@
 
 <div>
     <span>Items: <strong>{{ table_length }}</strong> </span>
-    <a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ table_id }}').content, true)); document.getElementById('dialog-{{ table_id }}').showModal()">
+    <a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ details_id }}').content, true)); document.getElementById('dialog-{{ details_id }}').showModal(); initTable('table-{{ details_id }}')">
         [show all]
     </a>
 </div>
-<template id="{{ table_id }}">
-    <dialog id="dialog-{{ table_id }}" >
+<template id="{{ details_id }}">
+    <dialog id="dialog-{{ details_id }}" >
         <div class="terminal-card">
             <header>jobs</header>
             <div>
-                <table>
+                <table id="table-{{ details_id }}" class="mytable">
                     <thead><tr>
                         <th>job_id</th>
                         <th>enqueue_time</th>
@@ -44,7 +44,7 @@
             <div class="terminal-card">
                 <header>job details</header>
                 <div>
-                    <table>
+                    <table class="mytable">
                         <thead>
                             <th>variable</th>
                             <th>value</th>

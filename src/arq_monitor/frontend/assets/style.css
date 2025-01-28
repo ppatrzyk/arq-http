@@ -29,9 +29,23 @@ section {
 }
 table {
     margin: 0;
+    border-collapse: collapse;
 }
 table td, table th {
-    border: 1px solid var(--font-color);
+    border-style: none !important;
+}
+.mytable thead tr, .datatable-table thead tr {
+    border-bottom: 1px solid var(--font-color);
+}
+.mytable tbody tr, .datatable-table tbody tr {
+    border-bottom: 1px dotted var(--font-color);
+}
+.datatable-pagination-list {
+    padding: 0;
+}
+.datatable-pagination-list li {
+    display: inline;
+    padding: 0.5em;
 }
 dialog {
     padding: 0;

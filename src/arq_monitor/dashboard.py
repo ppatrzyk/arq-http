@@ -64,7 +64,7 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 if queue:
                     queues_data = table_template.render(
                         data=queue,
-                        table_id="queues-table",
+                        details_id="queues-table",
                         table_length=len(queue)
                     )
                 if stats_data:
@@ -78,7 +78,7 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 if results:
                     results_data = table_template.render(
                         data=results,
-                        table_id="jobs-table",
+                        details_id="jobs-table",
                         table_length=len(results)
                     )
                 if stats_data:

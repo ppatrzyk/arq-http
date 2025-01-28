@@ -1,6 +1,6 @@
 [project]
 name = "arq-monitor"
-version = "0.1"
+version = "0.2"
 description = "arq dashboard and http api"
 authors = [ {name = "Piotr Patrzyk"}, ]
 license = {text = "MIT"}
