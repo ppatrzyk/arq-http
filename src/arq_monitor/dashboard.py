@@ -15,8 +15,6 @@ from .config import JINJA_ENV, logger, TEMPLATES
 from .stats import compute_stats
 from .utils import get_jobs_data
 
-NO_DATA = """<div>no data available</div>"""
-
 async def list_dashboards(request: Request):
     """
     List available dashboards
@@ -56,42 +54,46 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                 await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
                 stats_data = compute_stats(jobs_data, queue_name)
+                noplot_template = JINJA_ENV.get_template("components/noplotdata.html.jinja")
                 stats_template = JINJA_ENV.get_template("components/stats.html.jinja")
                 table_template = JINJA_ENV.get_template("components/table.html.jinja")
-                queues_data = queues_stats = results_data = results_stats = NO_DATA
 
                 queue = jobs_data.get("queues").get(queue_name, [])
-                if queue:
-                    queues_data = table_template.render(
-                        data=queue,
-                        details_id="queues-table",
-                        table_length=len(queue)
-                    )
-                if stats_data:
-                    queues_stats = stats_template.render(
-                        data=stats_data.get("queues_stats"),
-                        ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", },
-                        title_label="queue"
-                    )
+                queues_data = table_template.render(
+                    data=queue,
+                    details_id="queues-table",
+                    table_length=len(queue)
+                )
                 
                 results = jobs_data.get("results").get(queue_name, [])
-                if results:
-                    results_data = table_template.render(
-                        data=results,
-                        details_id="jobs-table",
-                        table_length=len(results)
-                    )
+                results_data = table_template.render(
+                    data=results,
+                    details_id="jobs-table",
+                    table_length=len(results)
+                )
+                
                 if stats_data:
+                    queues_ids={"parent_id": "queues-plots", "cdf_id": "queues-cdf-plot", "hist_id": "queues-hist-plot", "ts_id": "queues-ts-plot", }
+                    queues_stats = stats_template.render(
+                        data=stats_data.get("queues_stats"),
+                        ids=queues_ids,
+                        title_label="queue"
+                    )
                     results_stats_list = list()
                     for function, job_stats_data in stats_data.get("results_stats").items():
+                        results_ids={"parent_id": "jobs-plots", "cdf_id": f"{function}-jobs-cdf-plot", "hist_id": f"{function}-jobs-hist-plot", "ts_id": f"{function}-jobs-ts-plot", }
                         entry = stats_template.render(
                             data=job_stats_data,
-                            ids={"parent_id": "jobs-plots", "cdf_id": f"{function}-jobs-cdf-plot", "hist_id": f"{function}-jobs-hist-plot", "ts_id": f"{function}-jobs-ts-plot", },
+                            ids=results_ids,
                             title_label=function
                         )
                         results_stats_list.append(entry)
                     if results_stats_list:
                         results_stats = "\n".join(results_stats_list)
+                else:
+                    queues_stats = noplot_template.render(ids={"parent_id": "queues-plots"})
+                    results_stats = noplot_template.render(ids={"parent_id": "jobs-plots"})
+                
                 data = {
                     "queues-data": queues_data,
                     "queues-stats": queues_stats,

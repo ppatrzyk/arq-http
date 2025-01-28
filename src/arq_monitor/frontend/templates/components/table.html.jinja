@@ -1,10 +1,14 @@
 
 <div>
     <span>Items: <strong>{{ table_length }}</strong> </span>
+    {% if table_length > 0 %}
     <a onclick="document.body.appendChild(document.importNode(document.getElementById('{{ details_id }}').content, true)); document.getElementById('dialog-{{ details_id }}').showModal(); initTable('table-{{ details_id }}')">
         [show all]
     </a>
+    {% endif %}
 </div>
+
+{% if table_length > 0 %}
 <template id="{{ details_id }}">
     <dialog id="dialog-{{ details_id }}" >
         <div class="terminal-card">
@@ -63,3 +67,4 @@
         </dialog>
     </template>
 {% endfor %}
+{% endif %}

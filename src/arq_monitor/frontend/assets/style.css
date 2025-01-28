@@ -23,6 +23,7 @@ section {
     aspect-ratio : 3 / 2;
     width: 100%;
     font-family: var(--font-stack);
+    text-align: center;
 }
 .u-title {
     font-size: var(--global-font-size);

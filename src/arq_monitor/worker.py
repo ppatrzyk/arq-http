@@ -7,13 +7,14 @@ arq worker.WorkerSettings
 
 from datetime import datetime, timedelta, UTC
 from random import random
+from statistics import mean
 
 from .config import ARQ_CONN_CONFIG
 
 async def get_random_numbers(ctx: dict, n: int):
     assert n >= 0, "n must be positive"
     numbers = tuple(random() for _ in range(n))
-    return numbers
+    return mean(numbers)
 
 class WorkerSettings:
     timezone = UTC

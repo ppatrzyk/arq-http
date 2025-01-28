@@ -1,0 +1,8 @@
+
+<script>
+  var vizElements = document.getElementById('{{ ids.parent_id }}').getElementsByClassName('viz-item');
+  Array.from(vizElements).forEach(el => {
+    var noDataEl = document.importNode(document.getElementById('nodata').content, true);
+    el.replaceChildren(...[noDataEl, ]);
+  })
+</script>

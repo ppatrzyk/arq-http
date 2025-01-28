@@ -14,13 +14,12 @@ docker run -e REDIS_ADDRESS="redis://localhost:6379" -p 8000:8000 pieca/arq-moni
 - api docs: http://localhost:8000/api/docs
 
 TODO:
-    show items in queue 0
     show job status in table
     config how often data is pushed to frontend
     todo fails when mutiple functions exist
 
 ```
-docker build -t pieca/arq-monitor:0.1 .
+docker build -t pieca/arq-monitor:0.2 .
 ```
 
 ## local run
@@ -36,5 +35,5 @@ REDIS_ADDRESS="redis://localhost:6380" arq-monitor
 REDIS_ADDRESS="redis://localhost:6380" arq arq_monitor.worker.WorkerSettings
 
 # create tasks
-parallel -I ,, curl -X POST -d \'{\"_queue_name\": \"arq:myqueue\", \"function\": \"get_random_numbers\", \"n\": ,,}\' http://localhost:8000/api/jobs ::: {100..200}
+parallel -I ,, curl -X POST -d \'{\"_queue_name\": \"arq:myqueue\", \"function\": \"get_random_numbers\", \"n\": ,,}\' http://localhost:8000/api/jobs ::: {100000..100100}
 ```
