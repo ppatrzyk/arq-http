@@ -2,6 +2,8 @@
 Api routes
 """
 
+from datetime import datetime
+
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -69,6 +71,8 @@ async def create_job(request: Request):
             application/json:
                 schema:
                     type: object
+                    additionalProperties:
+                        description: keyword args to be passed to function
                     required:
                         - function
                         - _queue_name
@@ -76,15 +80,22 @@ async def create_job(request: Request):
                         function:
                             type: string
                             description: function name
-                        args:
-                            type: array
-                            description: args to be passed to function
-                        kwargs:
-                            type: object
-                            description: kwargs to be passed to function
+                        _job_id:
+                            type: string
+                            description: job id
                         _queue_name:
                             type: string
                             description: queue name
+                        _defer_until:
+                            type: string
+                            format: date-time
+                            description: execution time (ISO formatted string)
+                        _defer_by:
+                            type: number
+                            description: delay execution (seconds)
+                        _expires:
+                            type: number
+                            description: expire tasks after (seconds)
     responses:
         201:
             description: Job created.
@@ -100,7 +111,7 @@ async def create_job(request: Request):
                                 type: string
                                 description: job_id of created job
         400:
-            description: Job not created.
+            description: wrong request format.
             content:
                 application/json:
                     schema:
@@ -128,17 +139,17 @@ async def create_job(request: Request):
     """
     try:
         data = await request.json()
+        if data.get("_defer_until"):
+            data["_defer_until"] = datetime.fromisoformat(data["_defer_until"])
         job = await create_new_job(arq_conn=request.state.arq_conn, kwargs=data)
-        if job is None:
-            response = JSONResponse(
-                content={"status": "error", "detail": "job not created"},
-                status_code=400
-            )
-        else:
-            response = JSONResponse(
-                content={"status": "success", "job_id": job.job_id},
-                status_code=201
-            )
+        assert job is not None, "Job not created"
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    try:
+        response = JSONResponse(
+            content={"status": "success", "job_id": job.job_id},
+            status_code=201
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return response
