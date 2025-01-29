@@ -11,7 +11,7 @@ from anyio.streams.memory import MemoryObjectSendStream
 from arq.connections import ArqRedis
 from functools import partial
 
-from .config import JINJA_ENV, logger, TEMPLATES
+from .config import DEFAULT_REFRESH, JINJA_ENV, logger, TEMPLATES
 from .stats import compute_stats
 from .utils import get_jobs_data
 
@@ -33,25 +33,24 @@ async def get_dashboard(request: Request):
     Get dashboard page
     """
     queue_name = request.path_params['queue_name']
+    refresh = request.query_params.get("refresh")
     jobs_data = await get_jobs_data(request.state.arq_conn)
     results = jobs_data.get("results", {}).get(queue_name, [])
     functions = set(entry.get("function") for entry in results)
     response = TEMPLATES.TemplateResponse(
         request=request,
         name="dashboard.html.jinja",
-        context={"functions": functions}
+        context={"functions": functions, "refresh": refresh}
     )
     return response
 
-async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: ArqRedis, queue_name: str):
+async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: ArqRedis, queue_name: str, refresh: float):
     """
     adapted from https://github.com/sysid/sse-starlette/blob/main/examples/no_async_generators.py#L22
     """
     async with inner_send_chan:
         try: 
             while True:
-                # TODO push only if data has changed?
-                await anyio.sleep(1.0)
                 jobs_data = await get_jobs_data(arq_conn)
                 stats_data = compute_stats(jobs_data, queue_name)
                 noplot_template = JINJA_ENV.get_template("components/noplotdata.html.jinja")
@@ -107,6 +106,7 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                         "data": event_data,
                     }
                     await inner_send_chan.send(event)
+                await anyio.sleep(refresh)
         except anyio.get_cancelled_exc_class() as e:
             with anyio.move_on_after(1, shield=True):
                 close_msg = {"closing": True, }
@@ -118,10 +118,11 @@ async def get_dashboard_data(request: Request):
     Get dashboard data
     """
     queue_name = request.path_params['queue_name']
+    refresh = float(request.query_params.get("refresh", DEFAULT_REFRESH))
     send_chan, recv_chan = anyio.create_memory_object_stream(max_buffer_size=10)
     arq_conn = request.state.arq_conn
     response = EventSourceResponse(
-        data_sender_callable=partial(dashboard_data_gen, send_chan, arq_conn, queue_name),
+        data_sender_callable=partial(dashboard_data_gen, send_chan, arq_conn, queue_name, refresh),
         content=recv_chan,
         send_timeout=5
     )

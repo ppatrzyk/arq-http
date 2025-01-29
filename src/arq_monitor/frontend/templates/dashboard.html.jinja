@@ -1,6 +1,6 @@
 {% extends "base.html.jinja" %}
 {% block content %}
-    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data', queue_name=request.path_params['queue_name']) }}" >
+    <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data', queue_name=request.path_params['queue_name']) }}{% if refresh is not none %}?refresh={{ refresh }}{% endif %}" >
 
         <section>
             <header><h1>Dashboard: {{ request.path_params['queue_name'] }}</h1></header>

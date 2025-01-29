@@ -14,6 +14,7 @@ from starlette.templating import Jinja2Templates
 logger = logging.getLogger('uvicorn.error')
 
 config = Config(".env")
+DEFAULT_REFRESH = float(config("DEFAULT_REFRESH", default=1.0))
 REDIS_ADDRESS = config("REDIS_ADDRESS", default="redis://localhost:6379")
 ARQ_CONN_CONFIG = RedisSettings.from_dsn(REDIS_ADDRESS)
 
