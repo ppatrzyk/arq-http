@@ -1,19 +1,12 @@
 {% extends "base.html.jinja" %}
 {% block content %}
-    <header><h1>Dashboard: {{ request.path_params['queue_name'] }}</h1></header>
     <div hx-ext="sse" sse-connect="{{ request.app.url_path_for('dashboard:get_dashboard_data', queue_name=request.path_params['queue_name']) }}" >
 
         <section>
-            <h2>Queue stats</h2>
-            <div sse-swap="queues-data"></div>
-            <div id="queues-plots" class="viz-container">
-                <div id="queues-ts-plot" class="viz-item"></div>
-                <div id="queues-cdf-plot" class="viz-item"></div>
-                <div id="queues-hist-plot" class="viz-item"></div>
-            </div>
-            <div sse-swap="queues-stats"></div>
-        </section>
-        <hr>
+            <header><h1>Dashboard: {{ request.path_params['queue_name'] }}</h1></header>
+            <span>Last update: </span>
+            <span sse-swap="updated-at"></span>
+        </section>        
 
         <section>
             <h2>Results</h2>
@@ -27,7 +20,21 @@
             </div>
             <div sse-swap="results-stats"></div>
         </section>
+        <hr>
+
+        <section>
+            <h2>Queue stats</h2>
+            <div sse-swap="queues-data"></div>
+            <div id="queues-plots" class="viz-container">
+                <div id="queues-ts-plot" class="viz-item"></div>
+                <div id="queues-cdf-plot" class="viz-item"></div>
+                <div id="queues-hist-plot" class="viz-item"></div>
+            </div>
+            <div sse-swap="queues-stats"></div>
+        </section>
+
     </div>
+    {# template for all missing plots #}
     <template id="nodata">
         <div><strong>no data</strong></div>
     </template>

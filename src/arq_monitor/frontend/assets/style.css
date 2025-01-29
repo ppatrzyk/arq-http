@@ -11,7 +11,7 @@ section {
 }
 .viz-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr) minmax(300px, 1fr);
     grid-auto-rows: 1fr;
     gap: 10px 10px;
     align-items: center;
@@ -40,6 +40,17 @@ table td, table th {
 }
 .mytable tbody tr, .datatable-table tbody tr {
     border-bottom: 1px dotted var(--font-color);
+}
+.datatable-bottom {
+    margin-bottom: var(--global-line-height);
+    margin-top: var(--global-line-height);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    justify-items: start;
+}
+.datatable-bottom * {
+    margin: 0;
 }
 .datatable-pagination-list {
     padding: 0;

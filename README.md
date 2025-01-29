@@ -2,7 +2,10 @@
 
 _in progress_
 
-Dashboard and HTTP api for [arq task queue](https://github.com/python-arq/arq).
+TODO:
+    config how often data is pushed to frontend
+
+Dashboard and HTTP api for [arq job queue](https://github.com/python-arq/arq).
 
 ## Installation
 
@@ -41,12 +44,6 @@ curl -X POST \
     http://localhost:8000/api/jobs
 ```
 
-TODO:
-    config how often data is pushed to frontend
-    fix api spec, no args, kwargs on the same level additionalproperties
-    reorder sections?
-    datatables-bottom standard margins
-
 ```
 docker build -t pieca/arq-monitor:0.2 .
 ```
@@ -63,12 +60,12 @@ REDIS_ADDRESS="redis://localhost:6380" arq-monitor
 # run example worker
 REDIS_ADDRESS="redis://localhost:6380" arq arq_monitor.worker.WorkerSettings
 
-# create tasks
+# create jobs
 parallel -I ,, curl -X POST -d \'{\"_queue_name\": \"arq:myqueue\", \"function\": \"get_random_numbers\", \"n\": ,,}\' http://localhost:8000/api/jobs ::: {100000..100100}
 parallel -N0 curl -X POST -d \'{\"_queue_name\": \"arq:myqueue\", \"function\": \"random_sleep\"}\' http://localhost:8000/api/jobs ::: {1..10}
 ```
 
 ## Known limitations
 
-- to be triggered via http api, tasks cannot take custom classes as arguments
+- to be triggered via http api, jobs cannot take custom classes as arguments
 - dashboard needs to be manually refreshed after running unknown function

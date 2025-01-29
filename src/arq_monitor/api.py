@@ -95,7 +95,7 @@ async def create_job(request: Request):
                             description: delay execution (seconds)
                         _expires:
                             type: number
-                            description: expire tasks after (seconds)
+                            description: expire jobs after (seconds)
     responses:
         201:
             description: Job created.

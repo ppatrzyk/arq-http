@@ -95,6 +95,7 @@ async def dashboard_data_gen(inner_send_chan: MemoryObjectSendStream, arq_conn: 
                     results_stats = noplot_template.render(ids={"parent_id": "jobs-plots"})
                 
                 data = {
+                    "updated-at": jobs_data.get("updated_at", ""),
                     "queues-data": queues_data,
                     "queues-stats": queues_stats,
                     "results-data": results_data,

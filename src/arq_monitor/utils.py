@@ -72,8 +72,8 @@ async def get_jobs_data(arq_conn: ArqRedis):
     Get jobs data main function
     """
     results = await _get_job_results(arq_conn=arq_conn)
-    get_queue_tasks = tuple(_get_queue(arq_conn=arq_conn, queue_name=queue_name) for queue_name in results.keys())
-    get_queue_results = await asyncio.gather(*get_queue_tasks)
+    get_queue_jobs = tuple(_get_queue(arq_conn=arq_conn, queue_name=queue_name) for queue_name in results.keys())
+    get_queue_results = await asyncio.gather(*get_queue_jobs)
     queues = dict()
     for queue_name, queue_data in zip(results.keys(), get_queue_results):
         queues[queue_name] = queue_data
