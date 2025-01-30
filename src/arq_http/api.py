@@ -14,7 +14,7 @@ from .config import logger, TEMPLATES
 from .utils import create_new_job, get_jobs_data
 
 schemas = SchemaGenerator(
-    {"openapi": "3.0.0", "info": {"title": "arq-monitor", "version": "0.1"}}
+    {"openapi": "3.0.0", "info": {"title": "arq-http", "version": "0.1"}}
 )
 
 async def get_jobs(request: Request):

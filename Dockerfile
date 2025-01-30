@@ -1,13 +1,13 @@
 FROM python:3.13.1-slim
 
-COPY . /arq_monitor
-WORKDIR /arq_monitor
+COPY . /arq_http
+WORKDIR /arq_http
 
 RUN pip3 install .
 
-RUN useradd -U arqmonitor \
-    && chown -R arqmonitor:arqmonitor /arq_monitor
-USER arqmonitor
+RUN useradd -U arqhttp \
+    && chown -R arqhttp:arqhttp /arq_http
+USER arqhttp
 
 EXPOSE 8000
 
@@ -21,5 +21,5 @@ CMD [ \
     "1", \
     "--timeout-graceful-shutdown", \
     "1", \
-    "arq_monitor.server:app" \
+    "arq_http.server:app" \
 ]

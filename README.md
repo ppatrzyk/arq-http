@@ -1,4 +1,4 @@
-# arq-monitor
+# arq-http
 
 Dashboard and HTTP api for [arq job queue](https://github.com/python-arq/arq).
 
@@ -7,17 +7,17 @@ Dashboard and HTTP api for [arq job queue](https://github.com/python-arq/arq).
 ### Run with docker
 
 ```
-docker run -e REDIS_ADDRESS="redis://localhost:6379" -p 8000:8000 pieca/arq-monitor:0.1
+docker run -e REDIS_ADDRESS="<REDIS_ADDRESS>" -p 8000:8000 pieca/arq-http:0.2
 ```
 
 ### Install Python package
 
 ```
 # install
-TODO
+pip install arq-http
 
-# start rerver
-arq-monitor
+# start server
+arq-http
 ```
 
 ### Configuration
@@ -52,7 +52,7 @@ curl -X GET http://localhost:8000/api/jobs
 
 Keyword arguments to [enqueue_job](https://arq-docs.helpmanual.io/#arq.connections.ArqRedis.enqueue_job) need to be _posted_ as _json_ data.
 
-Assuming you have a function [`get_random_numbers`](src/arq_monitor/worker.py#L15):
+Assuming you have a function [`get_random_numbers`](src/arq_http/worker.py#L15):
 
 ```
 curl -X POST \
@@ -78,17 +78,17 @@ curl -X POST \
 docker run -p 6380:6379 valkey/valkey:8.0.2
 
 # run dashboard
-REDIS_ADDRESS="redis://localhost:6380" arq-monitor
+REDIS_ADDRESS="redis://localhost:6380" arq-http
 
 # run example worker
-REDIS_ADDRESS="redis://localhost:6380" arq arq_monitor.worker.WorkerSettings
+REDIS_ADDRESS="redis://localhost:6380" arq arq_http.worker.WorkerSettings
 
 # create jobs
 parallel -I ,, curl -X POST -d \'{\"_queue_name\": \"arq:myqueue\", \"function\": \"get_random_numbers\", \"n\": ,,}\' http://localhost:8000/api/jobs ::: {100000..100100}
 parallel -N0 curl -X POST -d \'{\"_queue_name\": \"arq:myqueue\", \"function\": \"random_sleep\"}\' http://localhost:8000/api/jobs ::: {1..10}
 
 # docker build
-docker build -t pieca/arq-monitor:0.2 .
+docker build -t pieca/arq-http:0.2 .
 ```
 
 ## Known limitations

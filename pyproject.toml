@@ -1,5 +1,5 @@
 [project]
-name = "arq-monitor"
+name = "arq-http"
 version = "0.2"
 description = "arq dashboard and http api"
 authors = [ {name = "Piotr Patrzyk"}, ]
@@ -7,7 +7,7 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.12"
 dynamic = ["dependencies", ]
-keywords = ["arq", "dashboard", "monitoring"]
+keywords = ["arq", "dashboard", "httping"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "License :: OSI Approved :: MIT License",
@@ -17,14 +17,14 @@ classifiers = [
 ]
 
 [project.urls]
-Source = "https://github.com/ppatrzyk/arq-monitor"
+Source = "https://github.com/ppatrzyk/arq-http"
 
 [build-system]
 requires = ["setuptools", ]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-script-files = ["scripts/arq-monitor"]
+script-files = ["scripts/arq-http"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
