@@ -27,7 +27,11 @@ Configuration is made via environment variables.
 | variable | description |
 | --- | --- |
 | REDIS_ADDRESS | redis address, default: redis://localhost:6379 |
-| DEFAULT_REFRESH | default refresh frequency of dashboards (in seconds), default: 1.0 |
+| DEFAULT_REFRESH | default refresh frequency of dashboards (in seconds), default: 5.0 |
+
+Refresh frequency can also be controlled by query parameter when opening dashboards:
+
+http://localhost:8000/dashboard/arq:myqueue?refresh=2
 
 ## Usage
 
@@ -56,6 +60,17 @@ curl -X POST \
     http://localhost:8000/api/jobs
 ```
 
+## Screenshots
+
+### Dashboard
+![dashboard](screenshots/dashboard.png)
+
+### Job listing
+![job_list](screenshots/job_list.png)
+
+### Job details
+![job_details](screenshots/job_details.png)
+
 ## local dev
 
 ```
@@ -80,3 +95,9 @@ docker build -t pieca/arq-monitor:0.2 .
 
 - to be triggered via http api, jobs cannot take custom classes as arguments
 - dashboard needs to be manually refreshed after running unknown function
+
+TODO:
+- optional disable table generation if too many items
+- push only if new data available
+- better filters based on job status
+- abort endpoint
